@@ -268,10 +268,17 @@ int main( int argc, char *argv[] )
 				n_data = 1; // to avoid infinite loop
 				filter_change = false;
 			}
-			double buffer_time[n_data] = {0};
-			double buffer_ch0[n_data] = {0};
-			double buffer_ch1[n_data] = {0};
-			double buffer_ch2[n_data] = {0};//temp          
+			// Fix
+			// error: variable-sized object may not be initialized
+			// by using memset to initialize arrays
+			double buffer_time[n_data];
+			memset(buffer_time, 0, sizeof(buffer_time));
+			double buffer_ch0[n_data];
+			memset(buffer_ch0, 0, sizeof(buffer_ch0));
+			double buffer_ch1[n_data];
+			memset(buffer_ch1, 0, sizeof(buffer_ch1));
+			double buffer_ch2[n_data];//temp
+			memset(buffer_ch2, 0, sizeof(buffer_ch2));
 
 
 			if(x_scan<1111)
