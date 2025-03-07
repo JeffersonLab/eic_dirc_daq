@@ -7,6 +7,8 @@ from serial.tools.list_ports import comports
 import serial
 from datetime import datetime
 import os
+import pymeasure
+from pymeasure.instruments.keithley import Keithley6517B
 
 #Basic Python libraries
 import sys
@@ -35,7 +37,7 @@ fout = ''
 foutHeader = 'timestamp\tbar_x\tbar_y\tpd_x\tpd_y\tlaser_rot\tpd_rot\tpd1\tpd2\tpd3\tbar in(2)/out(0)\n'
 
 
-pdUnits = 'V'
+pdUnits = 'pA'
 linUnits = 'mm'
 rotUnits = '°'
 
@@ -83,7 +85,7 @@ bar_y_SN = "45000002"
 pd_x_SN = "45000003"
 pd_y_SN = "45000004"
 rot_ctrl_SN = "70000002"
-pd_gpib = "25"
+pd_gpib = "27"
 
 stageList = ['bar_x',  #x-axis linear stage that holds bar
              'bar_y',   #y-axis linear stage that holds bar
@@ -232,6 +234,10 @@ def connectAll(root,stageList=['bar_x','bar_y','pd_x','pd_y','pd_rot','laser_rot
         connect(stage,root)
     return
     #end connectAll()
+
+def connectPD(root,gpib=pd_gpib):
+    meter = Keithley6517B('GPIB::'+str(gpib))
+    return meter
 
 def disconnect(stage):
     try:
@@ -568,6 +574,7 @@ if __name__ == '__main__':
         global root
         global connected
         global connButt
+        global meter
         connButt['text'] = 'Connecting...'
         connButt.config(relief='sunken')
 
@@ -578,6 +585,8 @@ if __name__ == '__main__':
                 connectAll(root)
                 print()
                 HomeAll(root)
+                print()
+                meter = connectPD(root)
             except:
                 pass
                 connected = False
@@ -617,8 +626,11 @@ if __name__ == '__main__':
                 pos = ref.get_Position()
                 stageRB[stage]['text'] = pos
 
-            for pd in [pd1_RB,pd2_RB,pd3_RB]:
-                pd['text'] = time.strftime("%S", time.localtime())
+            for i,pd in enumerate([pd1_RB,pd2_RB,pd3_RB],start=1):
+                meter.write(':ROUT:OPEN:ALL')
+                time.sleep(0.25)
+                meter.write(':ROUT:CLOS '+str(i))
+                pd['text'] = meter.current
                 
             ##############################################################
             '''
