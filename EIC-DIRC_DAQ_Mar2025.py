@@ -45,6 +45,8 @@ pdUnits = 'pA'
 linUnits = 'mm'
 rotUnits = '°'
 
+bkgColor = '#c5c9c7'
+
 run = True
 comConnect = False
 
@@ -266,11 +268,13 @@ def disconnect(stage):
 def disconnectAll(stageList=['bar_x','bar_y','pd_x','pd_y','pd_rot','laser_rot']):
     global run
     global connected
-
+    global root
     if connected:
         print('\nDisconnecting all stages:')
+        root.update()
         for stage in stageList:
             disconnect(stage)
+            root.update()
     run = False
     time.sleep(1)
     return
@@ -291,10 +295,12 @@ def Home(stageName,root):
     #end Home()
 
 def HomeAll(root,stageList=['bar_x','bar_y','pd_x','pd_y','pd_rot','laser_rot']):
-    print('Homing all stages:')
-    for stageName in stageList:
-        Home(stageName,root)
-    print()
+    if tk.messagebox.askyesno(title='Home All Stages?', message='Home all stages?\n\nIf yes, all stages will\nbe reinitialized and\nmoved to 0 posiiton.'):
+        print('Homing all stages:')
+        for stageName in stageList:
+            Home(stageName,root)
+            root.update()
+        print()
     return
     #end HomeAll()
 
@@ -341,13 +347,6 @@ def move(stage):
     return
     ###end move()
 
-def make_circle(canvas,x,y,r,color):
-    x0 = x - r
-    y0 = y - r
-    x1 = x + r
-    y1 = y + r
-    return canvas.create_oval(x0,y0,x1,y1,fill=color)
-
 def nothing():
     pass
     return
@@ -361,9 +360,9 @@ def placeTextEntry(x,y,box_fill,text='',state='normal'):
         label.place(x=x-50,y=y,anchor='n')
     return out
 
-def placeLabel(x,y,text):
+def placeLabel(x,y,text,anchor='n'):
     label = tk.Label(root,text=text,background='#c5c9c7')
-    label.place(x=x,y=y,anchor='n')
+    label.place(x=x,y=y,anchor=anchor)
     return
 
 def placeButton(x,y,text,command=nothing):
@@ -413,6 +412,19 @@ def moveBar(barPos):
     else:
         print("ERROR: program reached impossible state. Stop and restart everything")
     root.update()
+    return   
+
+def pdSkip():
+    global skipPD
+    global skipPD_Button
+    if skipPD:
+        skipPD_Button['text'] = 'Skip PDs'
+        skipPD_Button['bg']= bkgColor
+        skipPD = False
+    else:
+        skipPD_Button['text'] = 'PDs skipped'
+        skipPD_Button['bg']= 'red'
+        skipPD = True
     return
 
 
@@ -438,7 +450,7 @@ if __name__ == '__main__':
 
     #Title label for UI
     title = tk.Label(root,text="EIC DIRC QA Lab DAQ",background='#c5c9c7',font='Helvetica 13 bold')
-    title.place(x=pageXCenter,y=50,anchor='center')
+    title.place(x=pageXCenter,y=40,anchor='center')
 
 
     placeLabel(465, 75, 'Status')
@@ -448,36 +460,40 @@ if __name__ == '__main__':
     sys.stdout = redirector
 
 
+    #linear stages
+    y = 70
+    placeLabel(20,y,'Linear Stages','sw')
+    canvas.create_rectangle(20,y,colX4_4+30,220,fill=bkgColor)
     
-    y = 75
+    y += 5
     placeLabel(colX1_4, y, 'Stage SN')
     placeLabel(colX2_4, y, 'Pos. Read')
     placeLabel(colX3_4+20, y, 'Pos. Set')
     placeLabel(colX4_4, y, 'Move')
     
 
-    y = 100
+    y += 25
     bar_x_SN_box = placeTextEntry(colX1_4,y,bar_x_SN,'Bar X')
     bar_x_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+50,y,linUnits)
     bar_x_set = placeTextEntry(colX3_4+20,y,'')
     bar_x_move = placeButton(colX4_4,y,'Move',lambda: move('bar_x'))
 
-    y = 130
+    y += 30
     bar_y_SN_box = placeTextEntry(colX1_4,y,bar_y_SN,'Bar Y')
     bar_y_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+50,y,linUnits)
     bar_y_set = placeTextEntry(colX3_4+20,y,'')
     bar_y_move = placeButton(colX4_4,y,'Move',lambda: move('bar_y'))
 
-    y = 160
+    y += 30
     pd_x_SN_box = placeTextEntry(colX1_4,y,pd_x_SN,'PD X')
     pd_x_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+50,y,linUnits)
     pd_x_set = placeTextEntry(colX3_4+20,y,'')
     pd_x_move = placeButton(colX4_4,y,'Move',lambda: move('pd_x'))
 
-    y = 190    
+    y += 30
     pd_y_SN_box = placeTextEntry(colX1_4,y,pd_y_SN,'PD Y')
     pd_y_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+50,y,linUnits)
@@ -486,17 +502,21 @@ if __name__ == '__main__':
 
     
     #rotary stage controller
-    y = 235
+    y = 245
+    placeLabel(20,y,'Rotary Stages','sw')
+    canvas.create_rectangle(20,y,colX4_4+30,370,fill=bkgColor)
+
+    y += 5
     placeLabel(colX1_4, y, 'Stage SN')
     placeLabel(colX2_4, y, 'Pos. Read')
     placeLabel(colX3_4+20, y, 'Pos. Set')
     placeLabel(colX4_4, y, 'Move')
     
-    y = 260 
+    y += 25 
     rot_ctrl_SN_box = placeTextEntry(colX1_4,y,rot_ctrl_SN,'Ctrlr')
     
     
-    y = 290
+    y += 30
     laser_rot_SN_box = placeTextEntry(colX1_4,y,'N/A','Laser')
     laser_rot_SN_box['state'] = 'disable'
     laser_rot_RB = placeRB(colX2_4,y)
@@ -504,7 +524,7 @@ if __name__ == '__main__':
     laser_rot_set = placeTextEntry(colX3_4+20,y,'')
     laser_rot_move = placeButton(colX4_4,y,'Move',lambda: move('laser_rot'))
 
-    y = 320
+    y += 30
     pd_rot_SN_box = placeTextEntry(colX1_4,y,'N/A','PD')
     pd_rot_SN_box['state'] = 'disable'
     pd_rot_RB = placeRB(colX2_4,y)
@@ -512,48 +532,61 @@ if __name__ == '__main__':
     pd_rot_set = placeTextEntry(colX3_4+20,y,'')
     pd_rot_move = placeButton(colX4_4,y,'Move',lambda: move('pd_rot'))
 
+    
+    homeAll = placeButton(colX4_4-20,395,'Home All Stages',lambda: HomeAll(root))
+
 
     #Photodiode UI
-    y = 400
+
+    y = 395
+    placeLabel(20,y,'Photodiodes','sw')
+    canvas.create_rectangle(20,y,colX2_4+60,550,fill=bkgColor)
+
+
+    y += 5
     placeLabel(colX1_4, y, 'Addr.')
-    placeLabel(colX2_4, y, 'Value Read')
+    placeLabel(colX2_4, y+30, 'Value Read')
+
+    skipPD = False
+    skipPD_Button = tk.Button(root,text='Skip PDs',width=10,command=pdSkip)
+    skipPD_Button.place(x=colX2_4+60,y=y-4,anchor='ne')
     
-    y = 425
+    y += 25
     pd_gpib_box = placeTextEntry(colX1_4,y,pd_gpib,'Ctrlr')
 
-    y = 455
+    y += 30
     pd1_SN_box = placeTextEntry(colX1_4,y,'N/A','PD 1')
     pd1_SN_box['state'] = 'disable'
     pd1_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+45,y,pdUnits)
 
-    y = 485
+    y += 30
     pd2_SN_box = placeTextEntry(colX1_4,y,'N/A','PD 2')
     pd2_SN_box['state'] = 'disable'
     pd2_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+45,y,pdUnits)
 
-    y = 515
+    y += 30
     pd3_SN_box = placeTextEntry(colX1_4,y,'N/A','PD 2')
     pd3_SN_box['state'] = 'disable'
     pd3_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+45,y,pdUnits)
 
 
-
-    y = 400    
+    # bar position
+    y = 430    
     placeLabel(colX4_4-20,y,'Bar Position')
 
     barIn = tk.IntVar()
     pos = (('Bar Out',0),('Bar In    ',2))
 
-    yPos = 425
+    y += 25
     for p in pos:
         barPos = ttk.Radiobutton(root,text=p[0],value=p[1],variable=barIn)
-        barPos.place(x=colX4_4-20,y=yPos,anchor='n')
-        yPos += 25
+        barPos.place(x=colX4_4-20,y=y,anchor='n')
+        y += 25
 
-    bar_move = placeButton(colX4_4-20,yPos+10,'Move Bar',lambda: moveBar(barIn))
+    bar_move = placeButton(colX4_4-20,y+10,'Move Bar',lambda: moveBar(barIn))
 
     
     stageRB = {'bar_x': bar_x_RB,\
@@ -566,7 +599,7 @@ if __name__ == '__main__':
 
     enable_on_connect = [bar_x_set,bar_x_move,bar_y_set,bar_y_move,pd_x_set,\
               pd_x_move,pd_y_set,pd_y_move,laser_rot_set,laser_rot_move,\
-              pd_rot_set,pd_rot_move,bar_move]
+              pd_rot_set,pd_rot_move,bar_move,skipPD_Button,homeAll]
 
     disable_on_connect = [bar_x_SN_box,bar_y_SN_box,pd_x_SN_box,pd_y_SN_box,\
                           rot_ctrl_SN_box,pd_gpib_box]
@@ -609,8 +642,8 @@ if __name__ == '__main__':
             try:
                 connectAll(root)
                 print()
-                HomeAll(root)
-                print()
+                #HomeAll(root)
+                #print()
                 if not SIMULATION:
                     meter = connectPD(root)
             except:
@@ -644,7 +677,7 @@ if __name__ == '__main__':
     #Main loop - program just loops over this section of code when running
     while run:
         if SIMULATION: SimulationManager.Instance.InitializeSimulations()
-        time.sleep(0.125)
+        time.sleep(0.25)
         timestamp['text'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         if connected:
             for stage in stageList:
@@ -654,11 +687,21 @@ if __name__ == '__main__':
 
             if not SIMULATION:
                 for i,pd in enumerate([pd1_RB,pd2_RB,pd3_RB],start=1):
-                    meter.write(':ROUT:OPEN:ALL')
-                    time.sleep(0.25)
-                    meter.write(':ROUT:CLOS '+str(i))
-                    pd['text'] = meter.current
-                
+                    if not skipPD:
+                        meter.write(':ROUT:OPEN:ALL')
+                        time.sleep(0.25)
+                        meter.write(':ROUT:CLOS '+str(i))
+                        pd['text'] = meter.current
+                    else:
+                        pd['text'] = 'skipped'
+            else:        
+                for i,pd in enumerate([pd1_RB,pd2_RB,pd3_RB],start=1):
+                    if not skipPD:
+                        pd['text'] = time.strftime("%S", time.localtime())
+                    else:
+                        pd['text'] = 'skipped'
+            
+            
             ##############################################################
             '''
             TO DO:
