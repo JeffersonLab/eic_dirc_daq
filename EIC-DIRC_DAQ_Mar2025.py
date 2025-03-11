@@ -33,6 +33,10 @@ from System import Decimal
 
 SIMULATION = True ########################################################
 
+barInPos = [75,75]
+barOutPos = [0,0]
+
+
 fout = ''
 foutHeader = 'timestamp\tbar_x\tbar_y\tpd_x\tpd_y\tlaser_rot\tpd_rot\tpd1\tpd2\tpd3\tbar in(2)/out(0)\n'
 
@@ -100,13 +104,13 @@ stageList = ['bar_x',  #x-axis linear stage that holds bar
 # a direct connection to an integrated controller (like the linear stages),
 # their serial numbers are not relevant for connecting to that stage
 
-stageProps = {'bar_x'   :["45000001", 'linear', [0,150], ''],
-             'bar_y'    :["45000002", 'linear', [0,150], ''],
-             'pd_x'     :["45000003", 'linear', [0,150], ''],
-             'pd_y'     :["45000004", 'linear', [0,150], ''],
+stageProps = {'bar_x'   :[bar_x_SN, 'linear', [0,150], ''],
+             'bar_y'    :[bar_y_SN, 'linear', [0,150], ''],
+             'pd_x'     :[pd_x_SN, 'linear', [0,150], ''],
+             'pd_y'     :[pd_y_SN, 'linear', [0,150], ''],
              'pd_rot'   :['',         'rotary', [0,360], ''],
              'laser_rot':['',         'rotary', [0,360], ''],
-             'rotCtrl'  :["70000002", 'rotary', [0,0],   '']}
+             'rotCtrl'  :[rot_ctrl_SN, 'rotary', [0,0],   '']}
 
 
 
@@ -191,7 +195,7 @@ def connect(stage,root,verbose=False):
         else:
             device = stageRef['rotCtrl']
         time.sleep(0.25)
-        chDict = {'pd_rot':1, 'laser_rot':2}
+        chDict = {'pd_rot':2, 'laser_rot':1}
         ch = chDict[stage]
 
         # For benchtop devices, get the channel
@@ -392,6 +396,26 @@ def log(items):
         
     return
 
+def moveBar(barPos):
+    global root
+    if barPos.get() == 2:
+        print('Moving bar in to beam',end='')
+        root.update()
+        stageRef['bar_x'].MoveTo(Decimal(barInPos[0]), 120000)
+        stageRef['bar_y'].MoveTo(Decimal(barInPos[1]), 120000)
+        print('.\n\tDone.')
+    elif barPos.get() == 0:
+        print('Moving bar out of beam',end='')
+        root.update()
+        stageRef['bar_x'].MoveTo(Decimal(barOutPos[0]), 120000)
+        stageRef['bar_y'].MoveTo(Decimal(barOutPos[1]), 120000)
+        print('.\n\tDone.')
+    else:
+        print("ERROR: program reached impossible state. Stop and restart everything")
+    root.update()
+    return
+
+
 if __name__ == '__main__':
 
     class OutputRedirector:
@@ -416,7 +440,6 @@ if __name__ == '__main__':
     title = tk.Label(root,text="EIC DIRC QA Lab DAQ",background='#c5c9c7',font='Helvetica 13 bold')
     title.place(x=pageXCenter,y=50,anchor='center')
 
-    #status = placeRB(pageXCenter,40,'Status Message',width=50)
 
     placeLabel(465, 75, 'Status')
     status= tk.Text(root,width=27,height=30,background='gray87')
@@ -530,6 +553,7 @@ if __name__ == '__main__':
         barPos.place(x=colX4_4-20,y=yPos,anchor='n')
         yPos += 25
 
+    bar_move = placeButton(colX4_4-20,yPos+10,'Move Bar',lambda: moveBar(barIn))
 
     
     stageRB = {'bar_x': bar_x_RB,\
@@ -542,7 +566,7 @@ if __name__ == '__main__':
 
     enable_on_connect = [bar_x_set,bar_x_move,bar_y_set,bar_y_move,pd_x_set,\
               pd_x_move,pd_y_set,pd_y_move,laser_rot_set,laser_rot_move,\
-              pd_rot_set,pd_rot_move]
+              pd_rot_set,pd_rot_move,bar_move]
 
     disable_on_connect = [bar_x_SN_box,bar_y_SN_box,pd_x_SN_box,pd_y_SN_box,\
                           rot_ctrl_SN_box,pd_gpib_box]
@@ -575,6 +599,7 @@ if __name__ == '__main__':
         global connected
         global connButt
         global meter
+        global SIMULATE
         connButt['text'] = 'Connecting...'
         connButt.config(relief='sunken')
 
@@ -586,7 +611,8 @@ if __name__ == '__main__':
                 print()
                 HomeAll(root)
                 print()
-                meter = connectPD(root)
+                if not SIMULATION:
+                    meter = connectPD(root)
             except:
                 pass
                 connected = False
@@ -626,11 +652,12 @@ if __name__ == '__main__':
                 pos = ref.get_Position()
                 stageRB[stage]['text'] = pos
 
-            for i,pd in enumerate([pd1_RB,pd2_RB,pd3_RB],start=1):
-                meter.write(':ROUT:OPEN:ALL')
-                time.sleep(0.25)
-                meter.write(':ROUT:CLOS '+str(i))
-                pd['text'] = meter.current
+            if not SIMULATION:
+                for i,pd in enumerate([pd1_RB,pd2_RB,pd3_RB],start=1):
+                    meter.write(':ROUT:OPEN:ALL')
+                    time.sleep(0.25)
+                    meter.write(':ROUT:CLOS '+str(i))
+                    pd['text'] = meter.current
                 
             ##############################################################
             '''
