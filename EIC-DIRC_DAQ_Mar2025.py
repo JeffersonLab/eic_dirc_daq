@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from tkinter import filedialog
+#from tkinter import filedialog
 import time
 from serial.tools.list_ports import comports
 import serial
@@ -9,11 +9,9 @@ from datetime import datetime
 import os
 import pymeasure
 from pymeasure.instruments.keithley import Keithley6517B
-
-#Basic Python libraries
 import sys
 import clr
-#from time import sleep
+
 
 #Configure references and add libraries for Thorlabs stages
 # Path in "clr.AddReference" below can be changed to locaiton of .dll's if
@@ -33,29 +31,28 @@ from System import Decimal
 
 SIMULATION = True ########################################################
 
-barInPos = [75,75]
-barOutPos = [0,0]
 
-
-fout = ''
-foutHeader = 'timestamp\tbar_x\tbar_y\tpd_x\tpd_y\tlaser_rot\tpd_rot\tpd1\tpd2\tpd3\tbar in(2)/out(0)\n'
-
+#bar??Pos format = [bar_x, bar_y, pd_x, pd_y, laser_rot, pd_rot]
+barInPos = [75,75,75,75,45,45]
+barOutPos = [0,0,0,0,0,0]
 
 pdUnits = 'pA'
 linUnits = 'mm'
 rotUnits = '°'
 
+fout = ''
+foutHeader = 'timestamp\tbar_x\tbar_y\tpd_x\tpd_y\tlaser_rot\tpd_rot\tpd1\tpd2\tpd3\tbar in(2)/out(0)\n'
+
+
+
+
 bkgColor = '#c5c9c7'
 
 run = True
 comConnect = False
-
 stageTimeoutLimit = 180
-
-
 stageConnected = False
 
-color = 'dark green'
 
 pageWidth = 600#400
 pageHeight = 600
@@ -402,12 +399,20 @@ def moveBar(barPos):
         root.update()
         stageRef['bar_x'].MoveTo(Decimal(barInPos[0]), 120000)
         stageRef['bar_y'].MoveTo(Decimal(barInPos[1]), 120000)
+        stageRef['pd_y'].MoveTo(Decimal(barInPos[2]), 120000)
+        stageRef['pd_y'].MoveTo(Decimal(barInPos[3]), 120000)
+        stageRef['laser_rot'].MoveTo(Decimal(barInPos[3]), 120000)
+        stageRef['pd_rot'].MoveTo(Decimal(barInPos[4]), 120000)
         print('.\n\tDone.')
     elif barPos.get() == 0:
         print('Moving bar out of beam',end='')
         root.update()
         stageRef['bar_x'].MoveTo(Decimal(barOutPos[0]), 120000)
         stageRef['bar_y'].MoveTo(Decimal(barOutPos[1]), 120000)
+        stageRef['pd_y'].MoveTo(Decimal(barOutPos[2]), 120000)
+        stageRef['pd_y'].MoveTo(Decimal(barOutPos[3]), 120000)
+        stageRef['laser_rot'].MoveTo(Decimal(barOutPos[3]), 120000)
+        stageRef['pd_rot'].MoveTo(Decimal(barOutPos[4]), 120000)
         print('.\n\tDone.')
     else:
         print("ERROR: program reached impossible state. Stop and restart everything")
@@ -706,17 +711,12 @@ if __name__ == '__main__':
             '''
             TO DO:
             
-            add PD connect control and readback
-
-            status messages
-                Updates in chunks at the start - find way to update line
-                by line instead of all at once.
+            Refine PD connect control and readback so it runs faster
 
             add move sequencing
                 Idea: use a text file to feed commands for sequencing and DAQ
 
-            Make it so stage control fills with current stage position at start
-                of program
+            
             '''
             ##############################################################
 
