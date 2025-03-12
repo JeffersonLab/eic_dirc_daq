@@ -1,10 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-#from tkinter import filedialog
 import time
-from serial.tools.list_ports import comports
-import serial
 from datetime import datetime
 import os
 import pymeasure
@@ -27,9 +24,25 @@ from Thorlabs.MotionControl.Benchtop.StepperMotorCLI import *
 from System import Decimal
 
 
-#from all_stages import *
 
 SIMULATION = True ########################################################
+
+
+#changable settings for the program conveniently all in one place
+
+bar_x_SN =      "45000001"
+bar_y_SN =      "45000002"
+pd_x_SN =       "45000003"
+pd_y_SN =       "45000004"
+rot_ctrl_SN =   "70000002"
+pd_gpib =       "27"
+
+stageList = ['bar_x',    #x-axis linear stage that holds bar
+             'bar_y',    #y-axis linear stage that holds bar
+             'pd_x',     #x-axis linear stage that hold DAQ photodiode
+             'pd_y',     #y-axis linear stage that hold DAQ photodiode
+             'pd_rot',   #rotary stage that holds DAQ photodiode
+             'laser_rot']#rotary stage that holds mirror for routing laser to bar
 
 
 #bar??Pos format = [bar_x, bar_y, pd_x, pd_y, laser_rot, pd_rot]
@@ -40,13 +53,14 @@ pdUnits = 'pA'
 linUnits = 'mm'
 rotUnits = '°'
 
+
+
+
+
+
+# constants for log file formatting
 fout = ''
 foutHeader = 'timestamp\tbar_x\tbar_y\tpd_x\tpd_y\tlaser_rot\tpd_rot\tpd1\tpd2\tpd3\tbar in(2)/out(0)\n'
-
-
-
-
-bkgColor = '#c5c9c7'
 
 run = True
 comConnect = False
@@ -54,22 +68,11 @@ stageTimeoutLimit = 180
 stageConnected = False
 
 
-pageWidth = 600#400
+#Constants used for GUI creation
+bkgColor = '#c5c9c7'
+
+pageWidth = 600
 pageHeight = 600
-
-xQuarterShift = 10
-#constants for columns of UI
-#pageXCenter = pageWidth/2
-#pageXoneThird = pageWidth/3
-#pageXtwoThird = pageWidth - pageXoneThird
-#colX1_4 =pageWidth/5 + xQuarterShift
-#colX2_4 =2*pageWidth/5 + xQuarterShift
-#colX3_4 = 3*pageWidth/5 + xQuarterShift
-#colX4_4 = 4* pageWidth/5 + xQuarterShift
-
-
-
-
 
 pageXCenter = pageWidth/2
 colX1_4 = 90
@@ -83,85 +86,30 @@ colX4_4 = 330
 # "rotCtrlSN" is the serial number for the 3-channel benchtop controller
 # connected to the rotary stages
 # Serial numbers should to be updated to match stage layout in QA lab
-bar_x_SN = "45000001"
-bar_y_SN = "45000002"
-pd_x_SN = "45000003"
-pd_y_SN = "45000004"
-rot_ctrl_SN = "70000002"
-pd_gpib = "27"
-
-stageList = ['bar_x',  #x-axis linear stage that holds bar
-             'bar_y',   #y-axis linear stage that holds bar
-             'pd_x',    #x-axis linear stage that hold DAQ photodiode
-             'pd_y',    #y-axis linear stage that hold DAQ photodiode
-             'pd_rot',  #rotary stage that holds DAQ photodiode
-             'laser_rot']#rotary stage that holds mirror for routing laser to bar
 
 
-#rotCtrl - benchtop controller for the two rotary stages
-# Because rotary stages are controlled using a benchtop controller instead of
-# a direct connection to an integrated controller (like the linear stages),
-# their serial numbers are not relevant for connecting to that stage
+#rotCtrl is the benchtop controller for the two rotary stages
+#   Because rotary stages are controlled using a benchtop controller instead of
+#   a direct connection to an integrated controller (like the linear stages),
+#   their serial numbers are not relevant for connecting to that stage, hence
+#   why those serial numbers are empty strings in dictionary
 
-stageProps = {'bar_x'   :[bar_x_SN, 'linear', [0,150], ''],
-             'bar_y'    :[bar_y_SN, 'linear', [0,150], ''],
-             'pd_x'     :[pd_x_SN, 'linear', [0,150], ''],
-             'pd_y'     :[pd_y_SN, 'linear', [0,150], ''],
-             'pd_rot'   :['',         'rotary', [0,360], ''],
-             'laser_rot':['',         'rotary', [0,360], ''],
-             'rotCtrl'  :[rot_ctrl_SN, 'rotary', [0,0],   '']}
-
-
-
-
-stageSN = {'bar_x': stageProps['bar_x'][0],\
-           'bar_y': stageProps['bar_y'][0],\
-           'pd_x' : stageProps['pd_x'][0],\
-           'pd_y' : stageProps['pd_y'][0],\
-           'rotCtrl': stageProps['rotCtrl'][0]}
+stageProps = {stageList[0]  :[bar_x_SN,     'linear', [0,300], ''],
+              stageList[1]  :[bar_y_SN,     'linear', [0,150], ''],
+              stageList[2]  :[pd_x_SN,      'linear', [0,300], ''],
+              stageList[3]  :[pd_y_SN,      'linear', [0,150], ''],
+              stageList[4]  :['',           'rotary', [0,360], ''],
+              stageList[5]  :['',           'rotary', [0,360], ''],
+              'rotCtrl'     :[rot_ctrl_SN,  'rotary', [0,0],   '']}
 
 
-stageType = {'bar_x'    : stageProps['bar_x'][1],\
-             'bar_y'    : stageProps['bar_y'][1],\
-             'pd_x'     : stageProps['pd_x'][1],\
-             'pd_y'     : stageProps['pd_y'][1],\
-             'pd_rot'   : stageProps['pd_rot'][1],\
-             'laser_rot': stageProps['laser_rot'][1]}
-
-stageLimits = {'bar_x'    : stageProps['bar_x'][2],\
-               'bar_y'    : stageProps['bar_y'][2],\
-               'pd_x'     : stageProps['pd_x'][2],\
-               'pd_y'     : stageProps['pd_y'][2],\
-               'pd_rot'   : stageProps['pd_rot'][2],\
-               'laser_rot': stageProps['laser_rot'][2]}
-
-
-#Dictionary of stage references. Definition are defined once
-# stage is connected to. References can be considered pointers
-# to the motorized stage's communication bus address
-stageRef = {'bar_x': stageProps['bar_x'][3],\
-            'bar_y': stageProps['bar_y'][3],\
-            'pd_x' : stageProps['pd_x'][3],\
-            'pd_y' : stageProps['pd_y'][3],\
-            'pd_rot': stageProps['pd_rot'][3],\
-            'laser_rot': stageProps['laser_rot'][3],\
-            'rotCtrl' : stageProps['rotCtrl'][3]}
-
-
-def connect(stage,root,verbose=False):
-    #global status
-    # verbose is a debug setting that causes the stage references to be
-    # printed out to further verify that each stage can be connected to
-    if verbose:
-        for p in stageRef:
-            print(p, stageRef[p],sep=' ')
-        print()
+def connect(stage,root):
 
     DeviceManagerCLI.BuildDeviceList()  
 
-    if stageType[stage] == 'linear':      
+    if stageProps[stage][1] == 'linear':      
         #connect to linear stage with serial number defined by dictionary
-        serial_no = stageSN[stage]
+        serial_no = stageProps[stage][0]
         device = LongTravelStage.CreateLongTravelStage(serial_no)
         device.Connect(serial_no)
 
@@ -178,21 +126,19 @@ def connect(stage,root,verbose=False):
 
         # Load any config needed by the controller
         motor_config = device.LoadMotorConfiguration(serial_no)
-        stageRef[stage] = device
+        stageProps[stage][3] = device
         print(f'"{stage}" connected.')
-        #status['text'] = f'"{stage}" connected.'
-        #msg_box['text'] = f'"{stage}" connected.'
 
-    elif stageType[stage] == 'rotary':
+    elif stageProps[stage][1] == 'rotary':
         #connect to rotary stage controller and then ch 1 and 2 for
         # actual stages
-        serial_no = stageSN['rotCtrl']
-        if stageRef['rotCtrl'] == '':
+        serial_no = stageProps['rotCtrl'][0]
+        if stageProps['rotCtrl'][3] == '':
             device = BenchtopStepperMotor.CreateBenchtopStepperMotor(serial_no)
             device.Connect(serial_no)
-            stageRef['rotCtrl'] = device
+            stageProps['rotCtrl'][3] = device
         else:
-            device = stageRef['rotCtrl']
+            device = stageProps['rotCtrl'][3]
         time.sleep(0.25)
         chDict = {'pd_rot':2, 'laser_rot':1}
         ch = chDict[stage]
@@ -217,11 +163,9 @@ def connect(stage,root,verbose=False):
         channel_config.DeviceSettingsName = 'HDR50'
         channel_config.UpdateCurrentConfiguration()
         channel.SetSettings(chan_settings, True, False)
-        
-        stageRef[stage]= channel
+        stageProps[stage][3]= channel
         print(f'"{stage}" connected.')
-        #status['text'] = f'"{stage}" connected.'
-
+        
     else:
         print('ERROR: Stage type not recognized')
     root.update()
@@ -230,9 +174,7 @@ def connect(stage,root,verbose=False):
     #end connect()
 
 def connectAll(root,stageList=['bar_x','bar_y','pd_x','pd_y','pd_rot','laser_rot']):
-    #global status
     print('Connecting all stages:')
-    #status['text'] = 'Connecting all stages...'
     for stage in stageList:
         connect(stage,root)
     return
@@ -244,16 +186,16 @@ def connectPD(root,gpib=pd_gpib):
 
 def disconnect(stage):
     try:
-        if stageType[stage] == 'linear':
-            stageRef[stage].StopPolling()
-            stageRef[stage].Disconnect()
-            stageRef[stage] = ''
+        if stageProps[stage][1] == 'linear':
+            stageProps[stage][3].StopPolling()
+            stageProps[stage][3].Disconnect()
+            stageProps[stage][3] = ''
             print(f'"{stage}" disconnected.')
-        elif stageType[stage] == 'rotary':
-            stageRef[stage].StopPolling()
-            stageRef[stage] == ''
-            if ((stageRef['pd_rot'] == '') and (stageRef['laser_rot'] == '')):
-                stageRef['rotCtrl'].Disconnect()
+        elif stageProps[stage][1] == 'rotary':
+            stageProps[stage][3].StopPolling()
+            stageProps[stage][3] == ''
+            if ((stageProps['pd_rot'][3] == '') and (stageProps['laser_rot'][3] == '')):
+                stageProps['rotCtrl'][3].Disconnect()
             print(f'"{stage}" disconnected.')
         else:
             print('ERROR: Stage type not recognized')
@@ -279,7 +221,7 @@ def disconnectAll(stageList=['bar_x','bar_y','pd_x','pd_y','pd_rot','laser_rot']
 
 
 def Home(stageName,root):
-    stage = stageRef[stageName]
+    stage = stageProps[stageName][3]
     if stage.get_NeedsHoming():
         print(f'Homing "{stageName}" ',end='')
         stage.Home(120000)  # 120 second timeout
@@ -307,7 +249,7 @@ def move(stage):
     global root
     global stageSet
     #get reference for stage name input to function
-    ref = stageRef[stage]
+    ref = stageProps[stage][3]
 
     new_pos = float(stageSet[stage].get())
 
@@ -397,22 +339,22 @@ def moveBar(barPos):
     if barPos.get() == 2:
         print('Moving bar in to beam',end='')
         root.update()
-        stageRef['bar_x'].MoveTo(Decimal(barInPos[0]), 120000)
-        stageRef['bar_y'].MoveTo(Decimal(barInPos[1]), 120000)
-        stageRef['pd_y'].MoveTo(Decimal(barInPos[2]), 120000)
-        stageRef['pd_y'].MoveTo(Decimal(barInPos[3]), 120000)
-        stageRef['laser_rot'].MoveTo(Decimal(barInPos[3]), 120000)
-        stageRef['pd_rot'].MoveTo(Decimal(barInPos[4]), 120000)
+        stageProps['bar_x'][3].MoveTo(Decimal(barInPos[0]), 120000)
+        stageProps['bar_y'][3].MoveTo(Decimal(barInPos[1]), 120000)
+        stageProps['pd_y'][3].MoveTo(Decimal(barInPos[2]), 120000)
+        stageProps['pd_y'][3].MoveTo(Decimal(barInPos[3]), 120000)
+        stageProps['laser_rot'][3].MoveTo(Decimal(barInPos[3]), 120000)
+        stageProps['pd_rot'][3].MoveTo(Decimal(barInPos[4]), 120000)
         print('.\n\tDone.')
     elif barPos.get() == 0:
         print('Moving bar out of beam',end='')
         root.update()
-        stageRef['bar_x'].MoveTo(Decimal(barOutPos[0]), 120000)
-        stageRef['bar_y'].MoveTo(Decimal(barOutPos[1]), 120000)
-        stageRef['pd_y'].MoveTo(Decimal(barOutPos[2]), 120000)
-        stageRef['pd_y'].MoveTo(Decimal(barOutPos[3]), 120000)
-        stageRef['laser_rot'].MoveTo(Decimal(barOutPos[3]), 120000)
-        stageRef['pd_rot'].MoveTo(Decimal(barOutPos[4]), 120000)
+        stageProps['bar_x'][3].MoveTo(Decimal(barOutPos[0]), 120000)
+        stageProps['bar_y'][3].MoveTo(Decimal(barOutPos[1]), 120000)
+        stageProps['pd_y'][3].MoveTo(Decimal(barOutPos[2]), 120000)
+        stageProps['pd_y'][3].MoveTo(Decimal(barOutPos[3]), 120000)
+        stageProps['laser_rot'][3].MoveTo(Decimal(barOutPos[3]), 120000)
+        stageProps['pd_rot'][3].MoveTo(Decimal(barOutPos[4]), 120000)
         print('.\n\tDone.')
     else:
         print("ERROR: program reached impossible state. Stop and restart everything")
@@ -686,7 +628,7 @@ if __name__ == '__main__':
         timestamp['text'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         if connected:
             for stage in stageList:
-                ref = stageRef[stage]
+                ref = stageProps[stage][3]
                 pos = ref.get_Position()
                 stageRB[stage]['text'] = pos
 
@@ -724,7 +666,6 @@ if __name__ == '__main__':
         root.update_idletasks()
         root.update()
 
-    # uncomment line below if using Thorlabs Kinesis simulation mode
     if SIMULATION: SimulationManager.Instance.UninitializeSimulations()
     
     print('\nProgram closed.')
