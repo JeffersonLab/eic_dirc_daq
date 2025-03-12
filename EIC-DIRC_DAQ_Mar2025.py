@@ -1,14 +1,9 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
-import time
+from tkinter import ttk,messagebox
+#from tkinter import messagebox
 from datetime import datetime
-import os
-import pymeasure
 from pymeasure.instruments.keithley import Keithley6517B
-import sys
-import clr
-
+import time,os,socket,pymeasure,sys,clr
 
 #Configure references and add libraries for Thorlabs stages
 # Path in "clr.AddReference" below can be changed to locaiton of .dll's if
@@ -25,9 +20,6 @@ from System import Decimal
 
 
 
-SIMULATION = True ########################################################
-
-
 #changable settings for the program conveniently all in one place
 
 bar_x_SN =      "45000001"
@@ -42,7 +34,7 @@ stageList = ['bar_x',    #x-axis linear stage that holds bar
              'pd_x',     #x-axis linear stage that hold DAQ photodiode
              'pd_y',     #y-axis linear stage that hold DAQ photodiode
              'pd_rot',   #rotary stage that holds DAQ photodiode
-             'laser_rot']#rotary stage that holds mirror for routing laser to bar
+             'brew_rot']#rotary stage that holds mirror for routing laser to bar
 
 
 #bar??Pos format = [bar_x, bar_y, pd_x, pd_y, laser_rot, pd_rot]
@@ -55,7 +47,17 @@ rotUnits = '°'
 
 
 
+#Line below forces program to run with simulated devices when run from DSG's
+#   development PC as opposed to trying to connect to non-existant read devices
+SIMULATION = socket.gethostname() == 'DSGCONTROLS2'
 
+if SIMULATION:
+    bar_x_SN =      "45000001"
+    bar_y_SN =      "45000002"
+    pd_x_SN =       "45000003"
+    pd_y_SN =       "45000004"
+    rot_ctrl_SN =   "70000002"
+    pd_gpib =       "27"    
 
 
 # constants for log file formatting
@@ -140,7 +142,7 @@ def connect(stage,root):
         else:
             device = stageProps['rotCtrl'][3]
         time.sleep(0.25)
-        chDict = {'pd_rot':2, 'laser_rot':1}
+        chDict = {stageList[4]:2, stageList[5]:1}
         ch = chDict[stage]
 
         # For benchtop devices, get the channel
@@ -173,7 +175,7 @@ def connect(stage,root):
     return
     #end connect()
 
-def connectAll(root,stageList=['bar_x','bar_y','pd_x','pd_y','pd_rot','laser_rot']):
+def connectAll(root,stageList=stageList):
     print('Connecting all stages:')
     for stage in stageList:
         connect(stage,root)
@@ -194,7 +196,7 @@ def disconnect(stage):
         elif stageProps[stage][1] == 'rotary':
             stageProps[stage][3].StopPolling()
             stageProps[stage][3] == ''
-            if ((stageProps['pd_rot'][3] == '') and (stageProps['laser_rot'][3] == '')):
+            if ((stageProps[stageList[4]][3] == '') and (stageProps[stageList[5]][3] == '')):
                 stageProps['rotCtrl'][3].Disconnect()
             print(f'"{stage}" disconnected.')
         else:
@@ -204,7 +206,7 @@ def disconnect(stage):
     return    
     #end disconnect()
    
-def disconnectAll(stageList=['bar_x','bar_y','pd_x','pd_y','pd_rot','laser_rot']):
+def disconnectAll(stageList=stageList):
     global run
     global connected
     global root
@@ -233,7 +235,7 @@ def Home(stageName,root):
     return
     #end Home()
 
-def HomeAll(root,stageList=['bar_x','bar_y','pd_x','pd_y','pd_rot','laser_rot']):
+def HomeAll(root,stageList=stageList):
     if tk.messagebox.askyesno(title='Home All Stages?', message='Home all stages?\n\nIf yes, all stages will\nbe reinitialized and\nmoved to 0 posiiton.'):
         print('Homing all stages:')
         for stageName in stageList:
@@ -339,22 +341,22 @@ def moveBar(barPos):
     if barPos.get() == 2:
         print('Moving bar in to beam',end='')
         root.update()
-        stageProps['bar_x'][3].MoveTo(Decimal(barInPos[0]), 120000)
-        stageProps['bar_y'][3].MoveTo(Decimal(barInPos[1]), 120000)
-        stageProps['pd_y'][3].MoveTo(Decimal(barInPos[2]), 120000)
-        stageProps['pd_y'][3].MoveTo(Decimal(barInPos[3]), 120000)
-        stageProps['laser_rot'][3].MoveTo(Decimal(barInPos[3]), 120000)
-        stageProps['pd_rot'][3].MoveTo(Decimal(barInPos[4]), 120000)
+        stageProps[stageList[0]][3].MoveTo(Decimal(barInPos[0]), 120000)
+        stageProps[stageList[1]][3].MoveTo(Decimal(barInPos[1]), 120000)
+        stageProps[stageList[2]][3].MoveTo(Decimal(barInPos[2]), 120000)
+        stageProps[stageList[3]][3].MoveTo(Decimal(barInPos[3]), 120000)
+        stageProps[stageList[5]][3].MoveTo(Decimal(barInPos[3]), 120000)
+        stageProps[stageList[4]][3].MoveTo(Decimal(barInPos[4]), 120000)
         print('.\n\tDone.')
     elif barPos.get() == 0:
         print('Moving bar out of beam',end='')
         root.update()
-        stageProps['bar_x'][3].MoveTo(Decimal(barOutPos[0]), 120000)
-        stageProps['bar_y'][3].MoveTo(Decimal(barOutPos[1]), 120000)
-        stageProps['pd_y'][3].MoveTo(Decimal(barOutPos[2]), 120000)
-        stageProps['pd_y'][3].MoveTo(Decimal(barOutPos[3]), 120000)
-        stageProps['laser_rot'][3].MoveTo(Decimal(barOutPos[3]), 120000)
-        stageProps['pd_rot'][3].MoveTo(Decimal(barOutPos[4]), 120000)
+        stageProps[stageList[0]][3].MoveTo(Decimal(barOutPos[0]), 120000)
+        stageProps[stageList[1]][3].MoveTo(Decimal(barOutPos[1]), 120000)
+        stageProps[stageList[2]][3].MoveTo(Decimal(barOutPos[2]), 120000)
+        stageProps[stageList[3]][3].MoveTo(Decimal(barOutPos[3]), 120000)
+        stageProps[stageList[5]][3].MoveTo(Decimal(barOutPos[3]), 120000)
+        stageProps[stageList[4]][3].MoveTo(Decimal(barOutPos[4]), 120000)
         print('.\n\tDone.')
     else:
         print("ERROR: program reached impossible state. Stop and restart everything")
@@ -424,28 +426,28 @@ if __name__ == '__main__':
     bar_x_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+50,y,linUnits)
     bar_x_set = placeTextEntry(colX3_4+20,y,'')
-    bar_x_move = placeButton(colX4_4,y,'Move',lambda: move('bar_x'))
+    bar_x_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[0]))
 
     y += 30
     bar_y_SN_box = placeTextEntry(colX1_4,y,bar_y_SN,'Bar Y')
     bar_y_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+50,y,linUnits)
     bar_y_set = placeTextEntry(colX3_4+20,y,'')
-    bar_y_move = placeButton(colX4_4,y,'Move',lambda: move('bar_y'))
+    bar_y_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[1]))
 
     y += 30
     pd_x_SN_box = placeTextEntry(colX1_4,y,pd_x_SN,'PD X')
     pd_x_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+50,y,linUnits)
     pd_x_set = placeTextEntry(colX3_4+20,y,'')
-    pd_x_move = placeButton(colX4_4,y,'Move',lambda: move('pd_x'))
+    pd_x_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[2]))
 
     y += 30
     pd_y_SN_box = placeTextEntry(colX1_4,y,pd_y_SN,'PD Y')
     pd_y_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+50,y,linUnits)
     pd_y_set = placeTextEntry(colX3_4+20,y,'')
-    pd_y_move = placeButton(colX4_4,y,'Move',lambda: move('pd_y'))
+    pd_y_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[3]))
 
     
     #rotary stage controller
@@ -469,7 +471,7 @@ if __name__ == '__main__':
     laser_rot_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+40,y,rotUnits)
     laser_rot_set = placeTextEntry(colX3_4+20,y,'')
-    laser_rot_move = placeButton(colX4_4,y,'Move',lambda: move('laser_rot'))
+    laser_rot_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[5]))
 
     y += 30
     pd_rot_SN_box = placeTextEntry(colX1_4,y,'N/A','PD')
@@ -477,7 +479,7 @@ if __name__ == '__main__':
     pd_rot_RB = placeRB(colX2_4,y)
     placeLabel(colX2_4+40,y,rotUnits)
     pd_rot_set = placeTextEntry(colX3_4+20,y,'')
-    pd_rot_move = placeButton(colX4_4,y,'Move',lambda: move('pd_rot'))
+    pd_rot_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[4]))
 
     
     homeAll = placeButton(colX4_4-20,395,'Home All Stages',lambda: HomeAll(root))
@@ -535,14 +537,6 @@ if __name__ == '__main__':
 
     bar_move = placeButton(colX4_4-20,y+10,'Move Bar',lambda: moveBar(barIn))
 
-    
-    stageRB = {'bar_x': bar_x_RB,\
-           'bar_y': bar_y_RB,\
-           'pd_x' : pd_x_RB,\
-           'pd_y' : pd_y_RB,\
-           'pd_rot': pd_rot_RB,\
-           'laser_rot': laser_rot_RB}
-
 
     enable_on_connect = [bar_x_set,bar_x_move,bar_y_set,bar_y_move,pd_x_set,\
               pd_x_move,pd_y_set,pd_y_move,laser_rot_set,laser_rot_move,\
@@ -554,21 +548,35 @@ if __name__ == '__main__':
     for i in enable_on_connect:
         i['state'] = 'disable'
 
-
+    '''
     stageRB = {'bar_x': bar_x_RB,\
                 'bar_y': bar_y_RB,\
                 'pd_x' : pd_x_RB,\
                 'pd_y' : pd_y_RB,\
                 'pd_rot': pd_rot_RB,\
                 'laser_rot': laser_rot_RB}
-            
+
     stageSet = {'bar_x': bar_x_set,\
                 'bar_y': bar_y_set,\
                 'pd_x' : pd_x_set,\
                 'pd_y' : pd_y_set,\
                 'pd_rot': pd_rot_set,\
                 'laser_rot': laser_rot_set}
+    '''
 
+    stageRB = {stageList[0]: bar_x_RB,\
+           stageList[1] : bar_y_RB,\
+           stageList[2] : pd_x_RB,\
+           stageList[3] : pd_y_RB,\
+           stageList[4] : pd_rot_RB,\
+           stageList[5] : laser_rot_RB}  
+
+    stageSet = {stageList[0]: bar_x_set,\
+           stageList[1] : bar_y_set,\
+           stageList[2] : pd_x_set,\
+           stageList[3] : pd_y_set,\
+           stageList[4] : pd_rot_set,\
+           stageList[5] : laser_rot_set}
     
     #Handles using window's 'X' button to close UI
     root.protocol('WM_DELETE_WINDOW',disconnectAll)
