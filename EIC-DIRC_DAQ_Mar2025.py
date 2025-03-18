@@ -21,12 +21,11 @@ from System import Decimal
 
 
 #changable settings for the program conveniently all in one place
-
-bar_x_SN =      "45000001"
-bar_y_SN =      "45000002"
-pd_x_SN =       "45000003"
-pd_y_SN =       "45000004"
-rot_ctrl_SN =   "70000002"
+bar_x_SN =      "45294954"
+bar_y_SN =      "45299074"
+pd_x_SN =       "45373284"
+pd_y_SN =       "45375164"
+rot_ctrl_SN =   "70373994"
 pd_gpib =       "27"
 
 stageList = ['bar_x',    #x-axis linear stage that holds bar
@@ -41,12 +40,23 @@ stageList = ['bar_x',    #x-axis linear stage that holds bar
 barInPos = [75,75,75,75,45,45]
 barOutPos = [0,0,0,0,0,0]
 
-pdUnits = 'pA'
+pdUnits = 'μA'
 linUnits = 'mm'
 rotUnits = '°'
 
 
-
+if pdUnits == 'pA':
+    pdUnitsFactor = 10**12
+elif pdUnits == 'nA':
+    pdUnitsFactor = 10**9
+elif pdUnits == 'μA':
+    pdUnitsFactor = 10**6
+elif pdUnits == 'mA':
+    pdUnitsFactor = 10**3
+elif pdUnits == 'A':
+    pdUnitsFactor = 1
+else:
+    pdUnitsFactor = 10**6
 #Line below forces program to run with simulated devices when run from DSG's
 #   development PC as opposed to trying to connect to non-existant read devices
 SIMULATION = socket.gethostname() == 'DSGCONTROLS2'
@@ -339,25 +349,27 @@ def log(items):
 def moveBar(barPos):
     global root
     if barPos.get() == 2:
-        print('Moving bar in to beam',end='')
-        root.update()
-        stageProps[stageList[0]][3].MoveTo(Decimal(barInPos[0]), 120000)
-        stageProps[stageList[1]][3].MoveTo(Decimal(barInPos[1]), 120000)
-        stageProps[stageList[2]][3].MoveTo(Decimal(barInPos[2]), 120000)
-        stageProps[stageList[3]][3].MoveTo(Decimal(barInPos[3]), 120000)
-        stageProps[stageList[5]][3].MoveTo(Decimal(barInPos[3]), 120000)
-        stageProps[stageList[4]][3].MoveTo(Decimal(barInPos[4]), 120000)
-        print('.\n\tDone.')
+        if tk.messagebox.askyesno(title='Move Bar In to Beam?', message='Move bar in to beam?\n\nIf yes, all stages will\nmove to corresponding\npredefined posiiton.'):
+            print('Moving bar in to beam',end='')
+            root.update()
+            stageProps[stageList[0]][3].MoveTo(Decimal(barInPos[0]), 120000)
+            stageProps[stageList[1]][3].MoveTo(Decimal(barInPos[1]), 120000)
+            stageProps[stageList[2]][3].MoveTo(Decimal(barInPos[2]), 120000)
+            stageProps[stageList[3]][3].MoveTo(Decimal(barInPos[3]), 120000)
+            stageProps[stageList[5]][3].MoveTo(Decimal(barInPos[3]), 120000)
+            stageProps[stageList[4]][3].MoveTo(Decimal(barInPos[4]), 120000)
+            print('.\n\tDone.')
     elif barPos.get() == 0:
-        print('Moving bar out of beam',end='')
-        root.update()
-        stageProps[stageList[0]][3].MoveTo(Decimal(barOutPos[0]), 120000)
-        stageProps[stageList[1]][3].MoveTo(Decimal(barOutPos[1]), 120000)
-        stageProps[stageList[2]][3].MoveTo(Decimal(barOutPos[2]), 120000)
-        stageProps[stageList[3]][3].MoveTo(Decimal(barOutPos[3]), 120000)
-        stageProps[stageList[5]][3].MoveTo(Decimal(barOutPos[3]), 120000)
-        stageProps[stageList[4]][3].MoveTo(Decimal(barOutPos[4]), 120000)
-        print('.\n\tDone.')
+        if tk.messagebox.askyesno(title='Move Bar Out of Beam?', message='Move bar out of beam?\n\nIf yes, all stages will\nmove to corresponding\npredefined posiiton.'):
+            print('Moving bar out of beam',end='')
+            root.update()
+            stageProps[stageList[0]][3].MoveTo(Decimal(barOutPos[0]), 120000)
+            stageProps[stageList[1]][3].MoveTo(Decimal(barOutPos[1]), 120000)
+            stageProps[stageList[2]][3].MoveTo(Decimal(barOutPos[2]), 120000)
+            stageProps[stageList[3]][3].MoveTo(Decimal(barOutPos[3]), 120000)
+            stageProps[stageList[5]][3].MoveTo(Decimal(barOutPos[3]), 120000)
+            stageProps[stageList[4]][3].MoveTo(Decimal(barOutPos[4]), 120000)
+            print('.\n\tDone.')
     else:
         print("ERROR: program reached impossible state. Stop and restart everything")
     root.update()
@@ -641,12 +653,13 @@ if __name__ == '__main__':
                 stageRB[stage]['text'] = pos
 
             if not SIMULATION:
+                skipPD = True   #############################################################################################
                 for i,pd in enumerate([pd1_RB,pd2_RB,pd3_RB],start=1):
                     if not skipPD:
-                        meter.write(':ROUT:OPEN:ALL')
-                        time.sleep(0.25)
-                        meter.write(':ROUT:CLOS '+str(i))
-                        pd['text'] = meter.current
+                        #meter.write(':ROUT:OPEN:ALL')
+                        #time.sleep(0.25)
+                        meter.write(':ROUT:CLOS (@ '+str(i)+')')
+                        pd['text'] = round((meter.current) * pdUnitsFactor,4)
                     else:
                         pd['text'] = 'skipped'
             else:        
