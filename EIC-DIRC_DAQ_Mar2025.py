@@ -40,6 +40,11 @@ stageList = ['bar_x',    #x-axis linear stage that holds bar
 barInPos = [75,75,75,75,45,45]
 barOutPos = [0,0,0,0,0,0]
 
+dXDefault = 5
+nColDefault = 5
+dYDefault = 5
+nRowDefault = 5
+
 pdUnits = 'μA'
 linUnits = 'mm'
 rotUnits = '°'
@@ -302,13 +307,17 @@ def nothing():
     pass
     return
 
-def placeTextEntry(x,y,box_fill,text='',state='normal'):
-    out = tk.Entry(root,width=10,state=state)
+def placeTextEntry(x,y,box_fill,text='',state='normal',width=10):
+    out = tk.Entry(root,width=width,state=state)
     out.insert(0,box_fill)
+    labelShift = 50
+    if width != 10:
+        x = x - 20
+        labelShift = labelShift - 20
     out.place(x=x,y=y,anchor='n')
     if text != '':
         label = tk.Label(root,text=text,background='#c5c9c7')
-        label.place(x=x-50,y=y,anchor='n')
+        label.place(x=x-labelShift,y=y,anchor='n')
     return out
 
 def placeLabel(x,y,text,anchor='n'):
@@ -414,9 +423,9 @@ if __name__ == '__main__':
     title.place(x=pageXCenter,y=40,anchor='center')
 
 
-    placeLabel(465, 75, 'Status')
-    status= tk.Text(root,width=27,height=30,background='gray87')
-    status.place(x=365,y=100,anchor='nw')
+    placeLabel(370, 70, 'Status','sw')
+    status= tk.Text(root,width=27,height=18,background='gray87')
+    status.place(x=370,y=73,anchor='nw')
     redirector = OutputRedirector(status)
     sys.stdout = redirector
 
@@ -494,7 +503,6 @@ if __name__ == '__main__':
     pd_rot_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[4]))
 
     
-    homeAll = placeButton(colX4_4-20,395,'Home All Stages',lambda: HomeAll(root))
 
 
     #Photodiode UI
@@ -535,8 +543,12 @@ if __name__ == '__main__':
 
 
     # bar position
-    y = 430    
-    placeLabel(colX4_4-20,y,'Bar Position')
+
+    homeAll = placeButton(colX4_4-30,395,'Home All Stages',lambda: HomeAll(root))
+    
+    y = 430
+    xShift = 30
+    placeLabel(colX4_4-xShift,y+10,'Bar Position')
 
     barIn = tk.IntVar()
     pos = (('Bar Out',0),('Bar In    ',2))
@@ -544,37 +556,51 @@ if __name__ == '__main__':
     y += 25
     for p in pos:
         barPos = ttk.Radiobutton(root,text=p[0],value=p[1],variable=barIn)
-        barPos.place(x=colX4_4-20,y=y,anchor='n')
+        barPos.place(x=colX4_4-xShift,y=y+10,anchor='n')
         y += 25
 
-    bar_move = placeButton(colX4_4-20,y+10,'Move Bar',lambda: moveBar(barIn))
+    bar_move = placeButton(colX4_4-xShift,y+20,'Move Bar',lambda: moveBar(barIn))
+
+
+    #move sequencing
+    x = 370
+    y = 395
+    placeLabel(x,y,'Move Sequencing','sw')
+    canvas.create_rectangle(x,y,x+220,y+155,fill=bkgColor)
+
+    x = 440
+    y = 400
+    xShift = 75
+    dX = placeTextEntry(x,y,dXDefault,'Δx',width=5)
+    dX['state'] = 'disable'
+    placeLabel(x+10, y, 'mm')
+    placeLabel(x+xShift, y, '# Cols.')
+    nCol = placeTextEntry(x+xShift+60,y,nColDefault,'',width = 5)
+    nCol['state'] = 'disable'
+    
+    y += 30
+    dY = placeTextEntry(x,y,dYDefault,'Δy',width=5)
+    dY['state'] = 'disable'
+    placeLabel(x+10, y, 'mm')
+    placeLabel(x+xShift, y, '# Rows')
+    nRow = placeTextEntry(x+xShift+60,y,nRowDefault,'',width = 5)
+    nRow['state'] = 'disable'
+
+    y += 30
+    moveSeqGo = placeButton(x+40,y+10,'Start Automated Move Sequence',nothing)
+
 
 
     enable_on_connect = [bar_x_set,bar_x_move,bar_y_set,bar_y_move,pd_x_set,\
               pd_x_move,pd_y_set,pd_y_move,laser_rot_set,laser_rot_move,\
-              pd_rot_set,pd_rot_move,bar_move,skipPD_Button,homeAll]
+              pd_rot_set,pd_rot_move,bar_move,skipPD_Button,homeAll,dX,\
+              nCol,dY,nRow,moveSeqGo]
 
     disable_on_connect = [bar_x_SN_box,bar_y_SN_box,pd_x_SN_box,pd_y_SN_box,\
                           rot_ctrl_SN_box,pd_gpib_box]
 
     for i in enable_on_connect:
         i['state'] = 'disable'
-
-    '''
-    stageRB = {'bar_x': bar_x_RB,\
-                'bar_y': bar_y_RB,\
-                'pd_x' : pd_x_RB,\
-                'pd_y' : pd_y_RB,\
-                'pd_rot': pd_rot_RB,\
-                'laser_rot': laser_rot_RB}
-
-    stageSet = {'bar_x': bar_x_set,\
-                'bar_y': bar_y_set,\
-                'pd_x' : pd_x_set,\
-                'pd_y' : pd_y_set,\
-                'pd_rot': pd_rot_set,\
-                'laser_rot': laser_rot_set}
-    '''
 
     stageRB = {stageList[0]: bar_x_RB,\
            stageList[1] : bar_y_RB,\
@@ -638,8 +664,8 @@ if __name__ == '__main__':
                pd_rot_RB,pd1_RB,pd2_RB,pd3_RB,barIn]
 
     
-    logButton = tk.Button(root,text='LOG',width=40,command=lambda: log(logList))
-    logButton.place(x=200,y=570,anchor='center')
+    logButton = tk.Button(root,text='LOG',width=80,command=lambda: log(logList))
+    logButton.place(x=pageXCenter,y=575,anchor='center')
 
     #Main loop - program just loops over this section of code when running
     while run:
