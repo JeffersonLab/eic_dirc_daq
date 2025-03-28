@@ -41,9 +41,10 @@ barInPos = [75,75,75,75,45,45]
 barOutPos = [0,0,0,0,0,0]
 
 dXDefault = 5
-nColDefault = 5
+nColDefault = 3
 dYDefault = 5
-nRowDefault = 5
+nRowDefault = 3
+
 
 pdUnits = 'μA'
 linUnits = 'mm'
@@ -62,6 +63,7 @@ elif pdUnits == 'A':
     pdUnitsFactor = 1
 else:
     pdUnitsFactor = 10**6
+    
 #Line below forces program to run with simulated devices when run from DSG's
 #   development PC as opposed to trying to connect to non-existant read devices
 SIMULATION = socket.gethostname() == 'DSGCONTROLS2'
@@ -262,13 +264,15 @@ def HomeAll(root,stageList=stageList):
 
 
 
-def move(stage):
+def move(stage,new_pos = -9999):
     global root
     global stageSet
     #get reference for stage name input to function
     ref = stageProps[stage][3]
 
-    new_pos = float(stageSet[stage].get())
+    if new_pos == -9999:
+        new_pos = stageSet[stage].get()
+    
 
     #check that new_pos isn't an empty string (indicates that that
     # stage's input was skipped in command line interface
@@ -396,6 +400,32 @@ def pdSkip():
         skipPD_Button['bg']= 'red'
         skipPD = True
     return
+
+def moveSeqSetUp():
+    global dX,dY,nCol,nRow,cmdQueue
+
+    NROW = int(nRow.get())
+    NCOL = int(nCol.get())
+    DX = float(dX.get())
+    DY = float(dY.get())
+    
+    cmdQueue = ['goToStart']
+    for y in range(NROW):
+        if y%2 == 0:
+            direction = '+'
+        else:
+            direction = '-'
+        for x in range(NCOL):
+            cmdQueue.append('daq')
+            if x != NCOL-1:
+                cmdQueue.append('delta:bar_x:'+direction+str(DX))
+        if y != NROW-1:
+            cmdQueue.append('delta:bar_y:+'+str(DY))
+    cmdQueue.append('goToStart')
+    cmdQueue.append('done')
+    return
+        
+    
 
 
 if __name__ == '__main__':
@@ -587,7 +617,7 @@ if __name__ == '__main__':
     nRow['state'] = 'disable'
 
     y += 30
-    moveSeqGo = placeButton(x+40,y+10,'Start Automated Move Sequence',nothing)
+    moveSeqGo = placeButton(x+40,y+10,'Start Automated Move Sequence',moveSeqSetUp)
 
 
 
@@ -667,6 +697,9 @@ if __name__ == '__main__':
     logButton = tk.Button(root,text='LOG',width=80,command=lambda: log(logList))
     logButton.place(x=pageXCenter,y=575,anchor='center')
 
+
+    cmdQueue = []
+    
     #Main loop - program just loops over this section of code when running
     while run:
         if SIMULATION: SimulationManager.Instance.InitializeSimulations()
@@ -695,6 +728,23 @@ if __name__ == '__main__':
                     else:
                         pd['text'] = 'skipped'
             
+
+            if len(cmdQueue) > 0:
+                cmdIn = cmdQueue[0]
+                if cmdIn == 'goToStart':
+                    move('bar_x',0)
+                    move('bar_y',0)
+                elif 'delta' in cmdIn:
+                    cmd,stage,shift = cmdIn.strip().split(':')
+                    new = float(stageRB[stage]['text']) + float(shift)
+                    move(stage,new)
+                elif cmdIn == 'daq':
+                    print('Taking Measurement.')
+                    log(logList)
+                elif cmdIn == 'done':
+                    print('\nMove sequence complete.')
+                cmdQueue = cmdQueue[1:]
+
             
             ##############################################################
             '''
@@ -702,8 +752,7 @@ if __name__ == '__main__':
             
             Refine PD connect control and readback so it runs faster
 
-            add move sequencing
-                Idea: use a text file to feed commands for sequencing and DAQ
+            Make so move sequence automatically starts a new log file
 
             
             '''
