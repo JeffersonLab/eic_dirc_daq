@@ -95,8 +95,8 @@ pageHeight = 600
 
 pageXCenter = pageWidth/2
 colX1_4 = 90
-colX2_4 = 170
-colX3_4 = 250
+colX2_4 = 170 - 6
+colX3_4 = 250 - 12
 colX4_4 = 330
 
 
@@ -311,11 +311,11 @@ def nothing():
     pass
     return
 
-def placeTextEntry(x,y,box_fill,text='',state='normal',width=10):
+def placeTextEntry(x,y,box_fill,text='',state='normal',width=7):
     out = tk.Entry(root,width=width,state=state)
     out.insert(0,box_fill)
     labelShift = 50
-    if width != 10:
+    if width not in [7,8]:
         x = x - 20
         labelShift = labelShift - 20
     out.place(x=x,y=y,anchor='n')
@@ -334,7 +334,7 @@ def placeButton(x,y,text,command=nothing):
     out.place(x=x,y=y-4,anchor='n')
     return out
 
-def placeRB(x,y,text='',width=9):
+def placeRB(x,y,text='',width=6):
     out = tk.Label(root,width=width,background='gray87',text=text)
     out.place(x=x,y=y,anchor='n')
     return out
@@ -473,31 +473,35 @@ if __name__ == '__main__':
     
 
     y += 25
-    bar_x_SN_box = placeTextEntry(colX1_4,y,bar_x_SN,'Bar X')
+    bar_x_SN_box = placeTextEntry(colX1_4,y,bar_x_SN,'Bar X',width=8)
     bar_x_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+50,y,linUnits)
-    bar_x_set = placeTextEntry(colX3_4+20,y,'')
+    placeLabel(colX2_4+38,y,linUnits)
+    bar_x_set = placeTextEntry(colX3_4+10,y,'')
+    placeLabel(colX3_4+48,y,linUnits)
     bar_x_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[0]))
 
     y += 30
-    bar_y_SN_box = placeTextEntry(colX1_4,y,bar_y_SN,'Bar Y')
+    bar_y_SN_box = placeTextEntry(colX1_4,y,bar_y_SN,'Bar Y',width=8)
     bar_y_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+50,y,linUnits)
-    bar_y_set = placeTextEntry(colX3_4+20,y,'')
+    placeLabel(colX2_4+38,y,linUnits)
+    bar_y_set = placeTextEntry(colX3_4+10,y,'')
+    placeLabel(colX3_4+48,y,linUnits)
     bar_y_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[1]))
 
     y += 30
-    pd_x_SN_box = placeTextEntry(colX1_4,y,pd_x_SN,'PD X')
+    pd_x_SN_box = placeTextEntry(colX1_4,y,pd_x_SN,'PD X',width=8)
     pd_x_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+50,y,linUnits)
-    pd_x_set = placeTextEntry(colX3_4+20,y,'')
+    placeLabel(colX2_4+38,y,linUnits)
+    pd_x_set = placeTextEntry(colX3_4+10,y,'')
+    placeLabel(colX3_4+48,y,linUnits)
     pd_x_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[2]))
 
     y += 30
-    pd_y_SN_box = placeTextEntry(colX1_4,y,pd_y_SN,'PD Y')
+    pd_y_SN_box = placeTextEntry(colX1_4,y,pd_y_SN,'PD Y',width=8)
     pd_y_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+50,y,linUnits)
-    pd_y_set = placeTextEntry(colX3_4+20,y,'')
+    placeLabel(colX2_4+38,y,linUnits)
+    pd_y_set = placeTextEntry(colX3_4+10,y,'')
+    placeLabel(colX3_4+48,y,linUnits)
     pd_y_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[3]))
 
     
@@ -513,23 +517,25 @@ if __name__ == '__main__':
     placeLabel(colX4_4, y, 'Move')
     
     y += 25 
-    rot_ctrl_SN_box = placeTextEntry(colX1_4,y,rot_ctrl_SN,'Ctrlr')
+    rot_ctrl_SN_box = placeTextEntry(colX1_4,y,rot_ctrl_SN,'Ctrlr',width=8)
     
     
     y += 30
-    laser_rot_SN_box = placeTextEntry(colX1_4,y,'N/A','Laser')
+    laser_rot_SN_box = placeTextEntry(colX1_4,y,'N/A','Laser',width=8)
     laser_rot_SN_box['state'] = 'disable'
     laser_rot_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+40,y,rotUnits)
-    laser_rot_set = placeTextEntry(colX3_4+20,y,'')
+    placeLabel(colX2_4+28,y,rotUnits)
+    laser_rot_set = placeTextEntry(colX3_4+10,y,'')
+    placeLabel(colX3_4+36,y,rotUnits)
     laser_rot_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[5]))
 
     y += 30
-    pd_rot_SN_box = placeTextEntry(colX1_4,y,'N/A','PD')
+    pd_rot_SN_box = placeTextEntry(colX1_4,y,'N/A','PD',width=8)
     pd_rot_SN_box['state'] = 'disable'
     pd_rot_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+40,y,rotUnits)
-    pd_rot_set = placeTextEntry(colX3_4+20,y,'')
+    placeLabel(colX2_4+28,y,rotUnits)
+    pd_rot_set = placeTextEntry(colX3_4+10,y,'')
+    placeLabel(colX3_4+36,y,rotUnits)
     pd_rot_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[4]))
 
     
@@ -551,25 +557,25 @@ if __name__ == '__main__':
     skipPD_Button.place(x=colX2_4+60,y=y-4,anchor='ne')
     
     y += 25
-    pd_gpib_box = placeTextEntry(colX1_4,y,pd_gpib,'Ctrlr')
+    pd_gpib_box = placeTextEntry(colX1_4,y,pd_gpib,'Ctrlr',width=8)
 
     y += 30
-    pd1_SN_box = placeTextEntry(colX1_4,y,'N/A','PD 1')
+    pd1_SN_box = placeTextEntry(colX1_4,y,'N/A','PD 1',width=8)
     pd1_SN_box['state'] = 'disable'
     pd1_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+45,y,pdUnits)
+    placeLabel(colX2_4+45-12,y,pdUnits)
 
     y += 30
-    pd2_SN_box = placeTextEntry(colX1_4,y,'N/A','PD 2')
+    pd2_SN_box = placeTextEntry(colX1_4,y,'N/A','PD 2',width=8)
     pd2_SN_box['state'] = 'disable'
     pd2_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+45,y,pdUnits)
+    placeLabel(colX2_4+45-12,y,pdUnits)
 
     y += 30
-    pd3_SN_box = placeTextEntry(colX1_4,y,'N/A','PD 2')
+    pd3_SN_box = placeTextEntry(colX1_4,y,'N/A','PD 2',width=8)
     pd3_SN_box['state'] = 'disable'
     pd3_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+45,y,pdUnits)
+    placeLabel(colX2_4+45-12,y,pdUnits)
 
 
     # bar position
@@ -596,7 +602,7 @@ if __name__ == '__main__':
     x = 370
     y = 395
     placeLabel(x,y,'Move Sequencing','sw')
-    canvas.create_rectangle(x,y,x+220,y+155,fill=bkgColor)
+    canvas.create_rectangle(x,y,x+220,y+110,fill=bkgColor)
 
     x = 440
     y = 400
