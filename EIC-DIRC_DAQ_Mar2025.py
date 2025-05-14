@@ -8,10 +8,17 @@ import time,os,socket,pymeasure,sys,clr
 #Configure references and add libraries for Thorlabs stages
 # Path in "clr.AddReference" below can be changed to locaiton of .dll's if
 # they are not in the default install location
-clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\Thorlabs.MotionControl.DeviceManagerCLI.dll")
-clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\Thorlabs.MotionControl.GenericMotorCLI.dll")
-clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\ThorLabs.MotionControl.IntegratedStepperMotorsCLI.dll")
-clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\ThorLabs.MotionControl.Benchtop.StepperMotorCLI.dll")
+# Windows vs Linux need different file path formats, hense the case structure
+# 'posix' = Linux; 'nt' or other = Windows
+if os.name == 'posix':
+    pathPrefix = "dlls/"
+else:
+    pathPrefix = "C:\\Program Files\\Thorlabs\\Kinesis\\"
+
+clr.AddReference(pathPrefix+"Thorlabs.MotionControl.DeviceManagerCLI.dll")
+clr.AddReference(pathPrefix+"Thorlabs.MotionControl.GenericMotorCLI.dll")
+clr.AddReference(pathPrefix+"ThorLabs.MotionControl.IntegratedStepperMotorsCLI.dll")
+clr.AddReference(pathPrefix+"ThorLabs.MotionControl.Benchtop.StepperMotorCLI.dll")
 
 #from Thorlabs.MotionControl.DeviceManagerCLI import *
 #from Thorlabs.MotionControl.IntegratedStepperMotorsCLI import *
