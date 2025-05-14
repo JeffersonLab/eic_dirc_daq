@@ -12,10 +12,16 @@ clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\Thorlabs.MotionControl.D
 clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\Thorlabs.MotionControl.GenericMotorCLI.dll")
 clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\ThorLabs.MotionControl.IntegratedStepperMotorsCLI.dll")
 clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\ThorLabs.MotionControl.Benchtop.StepperMotorCLI.dll")
-from Thorlabs.MotionControl.DeviceManagerCLI import *
+
+#from Thorlabs.MotionControl.DeviceManagerCLI import *
+#from Thorlabs.MotionControl.IntegratedStepperMotorsCLI import *
+#from Thorlabs.MotionControl.Benchtop.StepperMotorCLI import *
+
 from Thorlabs.MotionControl.GenericMotorCLI import *
-from Thorlabs.MotionControl.IntegratedStepperMotorsCLI import *
-from Thorlabs.MotionControl.Benchtop.StepperMotorCLI import *
+import Thorlabs.MotionControl.DeviceManagerCLI as devmgr  #needed for simulations
+import Thorlabs.MotionControl.IntegratedStepperMotorsCLI as lts
+import Thorlabs.MotionControl.Benchtop.StepperMotorCLI as hdr
+
 from System import Decimal
 
 
@@ -124,12 +130,12 @@ stageProps = {stageList[0]  :[bar_x_SN,     'linear', [0,300], ''],
 
 def connect(stage,root):
 
-    DeviceManagerCLI.BuildDeviceList()  
+    #DeviceManagerCLI.BuildDeviceList()  
 
     if stageProps[stage][1] == 'linear':      
         #connect to linear stage with serial number defined by dictionary
         serial_no = stageProps[stage][0]
-        device = LongTravelStage.CreateLongTravelStage(serial_no)
+        device = lts.LongTravelStage.CreateLongTravelStage(serial_no)
         device.Connect(serial_no)
 
         #check whether stage has been initialized, initializes if not
@@ -153,7 +159,7 @@ def connect(stage,root):
         # actual stages
         serial_no = stageProps['rotCtrl'][0]
         if stageProps['rotCtrl'][3] == '':
-            device = BenchtopStepperMotor.CreateBenchtopStepperMotor(serial_no)
+            device = hdr.BenchtopStepperMotor.CreateBenchtopStepperMotor(serial_no)
             device.Connect(serial_no)
             stageProps['rotCtrl'][3] = device
         else:
@@ -708,7 +714,7 @@ if __name__ == '__main__':
     
     #Main loop - program just loops over this section of code when running
     while run:
-        if SIMULATION: SimulationManager.Instance.InitializeSimulations()
+        if SIMULATION: devmgr.SimulationManager.Instance.InitializeSimulations()
         time.sleep(0.25)
         timestamp['text'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         if connected:
@@ -768,7 +774,7 @@ if __name__ == '__main__':
         root.update_idletasks()
         root.update()
 
-    if SIMULATION: SimulationManager.Instance.UninitializeSimulations()
+    if SIMULATION: devmgr.SimulationManager.Instance.UninitializeSimulations()
     
     print('\nProgram closed.')
     root.destroy()
