@@ -10,16 +10,19 @@ import time,os,socket,pymeasure,sys,clr
 # they are not in the default install location
 # Windows vs Linux need different file path formats, hense the case structure
 # 'posix' = Linux; 'nt' or other = Windows
+unix = False
 if os.name == 'posix':
     pathPrefix = "dlls/"
+    pathSuffix = ''
+    unix = True
 else:
     pathPrefix = "C:\\Program Files\\Thorlabs\\Kinesis\\"
+    pathSuffix = '.dll'
 
-clr.AddReference(pathPrefix+"Thorlabs.MotionControl.DeviceManagerCLI.dll")
-clr.AddReference(pathPrefix+"Thorlabs.MotionControl.GenericMotorCLI.dll")
-clr.AddReference(pathPrefix+"ThorLabs.MotionControl.IntegratedStepperMotorsCLI.dll")
-clr.AddReference(pathPrefix+"ThorLabs.MotionControl.Benchtop.StepperMotorCLI.dll")
-
+clr.AddReference(pathPrefix+"Thorlabs.MotionControl.DeviceManagerCLI"+pathSuffix)
+clr.AddReference(pathPrefix+"Thorlabs.MotionControl.GenericMotorCLI"+pathSuffix)
+clr.AddReference(pathPrefix+"Thorlabs.MotionControl.IntegratedStepperMotorsCLI"+pathSuffix)
+clr.AddReference(pathPrefix+"Thorlabs.MotionControl.Benchtop.StepperMotorCLI"+pathSuffix)
 #from Thorlabs.MotionControl.DeviceManagerCLI import *
 #from Thorlabs.MotionControl.IntegratedStepperMotorsCLI import *
 #from Thorlabs.MotionControl.Benchtop.StepperMotorCLI import *
@@ -103,15 +106,15 @@ stageConnected = False
 #Constants used for GUI creation
 bkgColor = '#c5c9c7'
 
-pageWidth = 600
+pageWidth = 675
 pageHeight = 600
 
 pageXCenter = pageWidth/2
-colX1_4 = 90
-colX2_4 = 170 - 6
-colX3_4 = 250 - 12
-colX4_4 = 330
-
+colX1 = 90
+colX2 = 164 + 10
+colX3 = 238 + 20 + 10
+colX4 = 330 + 30
+colX5 = 400 + 30
 
 #Dictionaries for defining stage serial numbers, limits, and storing
 # stage references (reference contains connection info for that stage)
@@ -334,7 +337,7 @@ def placeTextEntry(x,y,box_fill,text='',state='normal',width=7):
     out.place(x=x,y=y,anchor='n')
     if text != '':
         label = tk.Label(root,text=text,background='#c5c9c7')
-        label.place(x=x-labelShift,y=y,anchor='n')
+        label.place(x=x-labelShift-5,y=y,anchor='n')
     return out
 
 def placeLabel(x,y,text,anchor='n'):
@@ -463,93 +466,93 @@ if __name__ == '__main__':
 
     #Title label for UI
     title = tk.Label(root,text="EIC DIRC QA Lab DAQ",background='#c5c9c7',font='Helvetica 13 bold')
-    title.place(x=pageXCenter,y=40,anchor='center')
+    title.place(x=pageXCenter,y=30,anchor='center')
 
 
-    placeLabel(370, 70, 'Status','sw')
+    placeLabel(colX5+5, 70, 'Status','sw')
     status= tk.Text(root,width=27,height=18,background='gray87')
-    status.place(x=370,y=73,anchor='nw')
+    status.place(x=colX5+5,y=70,anchor='nw')
     redirector = OutputRedirector(status)
     sys.stdout = redirector
 
 
     #linear stages
     y = 70
-    placeLabel(20,y,'Linear Stages','sw')
-    canvas.create_rectangle(20,y,colX4_4+30,220,fill=bkgColor)
+    placeLabel(15,y,'Linear Stages','sw')
+    canvas.create_rectangle(15,y,colX4+65,220,fill=bkgColor)
     
     y += 5
-    placeLabel(colX1_4, y, 'Stage SN')
-    placeLabel(colX2_4, y, 'Pos. Read')
-    placeLabel(colX3_4+20, y, 'Pos. Set')
-    placeLabel(colX4_4, y, 'Move')
+    placeLabel(colX1, y, 'Stage SN')
+    placeLabel(colX2+10, y, 'Pos. Read')
+    placeLabel(colX3+20, y, 'Pos. Set')
+    placeLabel(colX4+30, y, 'Move')
     
 
     y += 25
-    bar_x_SN_box = placeTextEntry(colX1_4,y,bar_x_SN,'Bar X',width=8)
-    bar_x_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+38,y,linUnits)
-    bar_x_set = placeTextEntry(colX3_4+10,y,'')
-    placeLabel(colX3_4+48,y,linUnits)
-    bar_x_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[0]))
+    bar_x_SN_box = placeTextEntry(colX1,y,bar_x_SN,'Bar X',width=8)
+    bar_x_RB = placeRB(colX2,y)
+    placeLabel(colX2+45,y,linUnits)
+    bar_x_set = placeTextEntry(colX3+10,y,'')
+    placeLabel(colX3+60,y,linUnits)
+    bar_x_move = placeButton(colX4+30,y,'Move',lambda: move(stageList[0]))
 
     y += 30
-    bar_y_SN_box = placeTextEntry(colX1_4,y,bar_y_SN,'Bar Y',width=8)
-    bar_y_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+38,y,linUnits)
-    bar_y_set = placeTextEntry(colX3_4+10,y,'')
-    placeLabel(colX3_4+48,y,linUnits)
-    bar_y_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[1]))
+    bar_y_SN_box = placeTextEntry(colX1,y,bar_y_SN,'Bar Y',width=8)
+    bar_y_RB = placeRB(colX2,y)
+    placeLabel(colX2+45,y,linUnits)
+    bar_y_set = placeTextEntry(colX3+10,y,'')
+    placeLabel(colX3+60,y,linUnits)
+    bar_y_move = placeButton(colX4+30,y,'Move',lambda: move(stageList[1]))
 
     y += 30
-    pd_x_SN_box = placeTextEntry(colX1_4,y,pd_x_SN,'PD X',width=8)
-    pd_x_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+38,y,linUnits)
-    pd_x_set = placeTextEntry(colX3_4+10,y,'')
-    placeLabel(colX3_4+48,y,linUnits)
-    pd_x_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[2]))
+    pd_x_SN_box = placeTextEntry(colX1,y,pd_x_SN,'PD X',width=8)
+    pd_x_RB = placeRB(colX2,y)
+    placeLabel(colX2+45,y,linUnits)
+    pd_x_set = placeTextEntry(colX3+10,y,'')
+    placeLabel(colX3+60,y,linUnits)
+    pd_x_move = placeButton(colX4+30,y,'Move',lambda: move(stageList[2]))
 
     y += 30
-    pd_y_SN_box = placeTextEntry(colX1_4,y,pd_y_SN,'PD Y',width=8)
-    pd_y_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+38,y,linUnits)
-    pd_y_set = placeTextEntry(colX3_4+10,y,'')
-    placeLabel(colX3_4+48,y,linUnits)
-    pd_y_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[3]))
+    pd_y_SN_box = placeTextEntry(colX1,y,pd_y_SN,'PD Y',width=8)
+    pd_y_RB = placeRB(colX2,y)
+    placeLabel(colX2+45,y,linUnits)
+    pd_y_set = placeTextEntry(colX3+10,y,'')
+    placeLabel(colX3+60,y,linUnits)
+    pd_y_move = placeButton(colX4+30,y,'Move',lambda: move(stageList[3]))
 
     
     #rotary stage controller
     y = 245
-    placeLabel(20,y,'Rotary Stages','sw')
-    canvas.create_rectangle(20,y,colX4_4+30,370,fill=bkgColor)
+    placeLabel(15,y,'Rotary Stages','sw')
+    canvas.create_rectangle(15,y,colX4+65,370,fill=bkgColor)
 
     y += 5
-    placeLabel(colX1_4, y, 'Stage SN')
-    placeLabel(colX2_4, y, 'Pos. Read')
-    placeLabel(colX3_4+20, y, 'Pos. Set')
-    placeLabel(colX4_4, y, 'Move')
+    placeLabel(colX1, y, 'Stage SN')
+    placeLabel(colX2, y, 'Pos. Read')
+    placeLabel(colX3+20, y, 'Pos. Set')
+    placeLabel(colX4+30, y, 'Move')
     
     y += 25 
-    rot_ctrl_SN_box = placeTextEntry(colX1_4,y,rot_ctrl_SN,'Ctrlr',width=8)
+    rot_ctrl_SN_box = placeTextEntry(colX1,y,rot_ctrl_SN,'Ctrlr',width=8)
     
     
     y += 30
-    laser_rot_SN_box = placeTextEntry(colX1_4,y,'N/A','Laser',width=8)
+    laser_rot_SN_box = placeTextEntry(colX1,y,'N/A','Laser',width=8)
     laser_rot_SN_box['state'] = 'disable'
-    laser_rot_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+28,y,rotUnits)
-    laser_rot_set = placeTextEntry(colX3_4+10,y,'')
-    placeLabel(colX3_4+36,y,rotUnits)
-    laser_rot_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[5]))
+    laser_rot_RB = placeRB(colX2,y)
+    placeLabel(colX2+28,y,rotUnits)
+    laser_rot_set = placeTextEntry(colX3+10,y,'')
+    placeLabel(colX3+36,y,rotUnits)
+    laser_rot_move = placeButton(colX4+30,y,'Move',lambda: move(stageList[5]))
 
     y += 30
-    pd_rot_SN_box = placeTextEntry(colX1_4,y,'N/A','PD',width=8)
+    pd_rot_SN_box = placeTextEntry(colX1,y,'N/A','PD',width=8)
     pd_rot_SN_box['state'] = 'disable'
-    pd_rot_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+28,y,rotUnits)
-    pd_rot_set = placeTextEntry(colX3_4+10,y,'')
-    placeLabel(colX3_4+36,y,rotUnits)
-    pd_rot_move = placeButton(colX4_4,y,'Move',lambda: move(stageList[4]))
+    pd_rot_RB = placeRB(colX2,y)
+    placeLabel(colX2+28,y,rotUnits)
+    pd_rot_set = placeTextEntry(colX3+10,y,'')
+    placeLabel(colX3+36,y,rotUnits)
+    pd_rot_move = placeButton(colX4+30,y,'Move',lambda: move(stageList[4]))
 
     
 
@@ -557,47 +560,47 @@ if __name__ == '__main__':
     #Photodiode UI
 
     y = 395
-    placeLabel(20,y,'Photodiodes','sw')
-    canvas.create_rectangle(20,y,colX2_4+60,550,fill=bkgColor)
+    placeLabel(15,y,'Photodiodes','sw')
+    canvas.create_rectangle(15,y,colX2+65,550,fill=bkgColor)
 
 
     y += 5
-    placeLabel(colX1_4, y, 'Addr.')
-    placeLabel(colX2_4, y+30, 'Value Read')
+    placeLabel(colX1, y, 'Addr.')
+    placeLabel(colX2, y+30, 'Value Read')
 
     skipPD = False
     skipPD_Button = tk.Button(root,text='Skip PDs',width=10,command=pdSkip)
-    skipPD_Button.place(x=colX2_4+60,y=y-4,anchor='ne')
+    skipPD_Button.place(x=colX2+65,y=y-4,anchor='ne')
     
     y += 25
-    pd_gpib_box = placeTextEntry(colX1_4,y,pd_gpib,'Ctrlr',width=8)
+    pd_gpib_box = placeTextEntry(colX1,y,pd_gpib,'Ctrlr',width=8)
 
     y += 30
-    pd1_SN_box = placeTextEntry(colX1_4,y,'N/A','PD 1',width=8)
+    pd1_SN_box = placeTextEntry(colX1,y,'N/A','PD 1',width=8)
     pd1_SN_box['state'] = 'disable'
-    pd1_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+45-12,y,pdUnits)
+    pd1_RB = placeRB(colX2,y)
+    placeLabel(colX2+45-12,y,pdUnits)
 
     y += 30
-    pd2_SN_box = placeTextEntry(colX1_4,y,'N/A','PD 2',width=8)
+    pd2_SN_box = placeTextEntry(colX1,y,'N/A','PD 2',width=8)
     pd2_SN_box['state'] = 'disable'
-    pd2_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+45-12,y,pdUnits)
+    pd2_RB = placeRB(colX2,y)
+    placeLabel(colX2+45-12,y,pdUnits)
 
     y += 30
-    pd3_SN_box = placeTextEntry(colX1_4,y,'N/A','PD 2',width=8)
+    pd3_SN_box = placeTextEntry(colX1,y,'N/A','PD 2',width=8)
     pd3_SN_box['state'] = 'disable'
-    pd3_RB = placeRB(colX2_4,y)
-    placeLabel(colX2_4+45-12,y,pdUnits)
+    pd3_RB = placeRB(colX2,y)
+    placeLabel(colX2+45-12,y,pdUnits)
 
 
     # bar position
 
-    homeAll = placeButton(colX4_4-30,395,'Home All Stages',lambda: HomeAll(root))
+    homeAll = placeButton(colX4-30,395,'Home All Stages',lambda: HomeAll(root))
     
     y = 430
     xShift = 30
-    placeLabel(colX4_4-xShift,y+10,'Bar Position')
+    placeLabel(colX4-xShift,y+10,'Bar Position')
 
     barIn = tk.IntVar()
     pos = (('Bar Out',0),('Bar In    ',2))
@@ -605,20 +608,20 @@ if __name__ == '__main__':
     y += 25
     for p in pos:
         barPos = ttk.Radiobutton(root,text=p[0],value=p[1],variable=barIn)
-        barPos.place(x=colX4_4-xShift,y=y+10,anchor='n')
+        barPos.place(x=colX4-xShift,y=y+10,anchor='n')
         y += 25
 
-    bar_move = placeButton(colX4_4-xShift,y+20,'Move Bar',lambda: moveBar(barIn))
+    bar_move = placeButton(colX4-xShift,y+20,'Move Bar',lambda: moveBar(barIn))
 
 
     #move sequencing
-    x = 370
-    y = 395
+    x = colX5
+    y = 420
     placeLabel(x,y,'Move Sequencing','sw')
     canvas.create_rectangle(x,y,x+220,y+110,fill=bkgColor)
 
-    x = 440
-    y = 400
+    x = colX5 + 70
+    y += 5
     xShift = 75
     dX = placeTextEntry(x,y,dXDefault,'Δx',width=5)
     dX['state'] = 'disable'
@@ -636,7 +639,7 @@ if __name__ == '__main__':
     nRow['state'] = 'disable'
 
     y += 30
-    moveSeqGo = placeButton(x+40,y+10,'Start Automated Move Sequence',moveSeqSetUp)
+    moveSeqGo = placeButton(x+40,y+10,'Start Move Sequence',moveSeqSetUp)
 
 
 
@@ -704,8 +707,8 @@ if __name__ == '__main__':
         return
 
     y = 12
-    timestamp = placeRB(colX1_4-30,y,width=15)
-    connButt = placeButton(550,y,'Connect All',ConnectHome)
+    timestamp = placeRB(colX1,y,width=20)
+    connButt = placeButton(600,y,'Connect All',ConnectHome)
     connected = False
 
     #log button
@@ -721,7 +724,7 @@ if __name__ == '__main__':
     
     #Main loop - program just loops over this section of code when running
     while run:
-        if SIMULATION: devmgr.SimulationManager.Instance.InitializeSimulations()
+        if SIMULATION and not unix: devmgr.SimulationManager.Instance.InitializeSimulations()
         time.sleep(0.25)
         timestamp['text'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         if connected:
@@ -781,7 +784,7 @@ if __name__ == '__main__':
         root.update_idletasks()
         root.update()
 
-    if SIMULATION: devmgr.SimulationManager.Instance.UninitializeSimulations()
+    if SIMULATION and not unix: devmgr.SimulationManager.Instance.UninitializeSimulations()
     
     print('\nProgram closed.')
     root.destroy()
