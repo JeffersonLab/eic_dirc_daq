@@ -15,7 +15,6 @@
 		<Property Name="specify.custom.address" Type="Bool">false</Property>
 		<Item Name="Double click All-In-One_EIC-DIRC_DAQ.vi to open.txt" Type="Document" URL="../Double click All-In-One_EIC-DIRC_DAQ.vi to open.txt"/>
 		<Item Name="All-In-One_EIC-DIRC_DAQ.vi" Type="VI" URL="../All-In-One_EIC-DIRC_DAQ.vi"/>
-		<Item Name="build-scan-pts-list.vi" Type="VI" URL="../build-scan-pts-list.vi"/>
 		<Item Name="Dependencies" Type="Dependencies">
 			<Item Name="instr.lib" Type="Folder">
 				<Item Name="Keithley 6517.lvlib" Type="Library" URL="/&lt;instrlib&gt;/Keithley 6517/Keithley 6517.lvlib"/>
@@ -58,6 +57,11 @@
 				<Item Name="Trim Whitespace.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/error.llb/Trim Whitespace.vi"/>
 				<Item Name="whitespace.ctl" Type="VI" URL="/&lt;vilib&gt;/Utility/error.llb/whitespace.ctl"/>
 				<Item Name="NI_AALBase.lvlib" Type="Library" URL="/&lt;vilib&gt;/Analysis/NI_AALBase.lvlib"/>
+				<Item Name="Sort 2D Array.vim" Type="VI" URL="/&lt;vilib&gt;/Array/Sort 2D Array.vim"/>
+				<Item Name="Sort 2D Array - Pop Stack.vi" Type="VI" URL="/&lt;vilib&gt;/Array/Sort 2D Array - Pop Stack.vi"/>
+				<Item Name="Sort 2D Array - Push Stack.vi" Type="VI" URL="/&lt;vilib&gt;/Array/Sort 2D Array - Push Stack.vi"/>
+				<Item Name="Assert Block Data Type.vim" Type="VI" URL="/&lt;vilib&gt;/Utility/TypeAssert/Assert Block Data Type.vim"/>
+				<Item Name="NI_AALPro.lvlib" Type="Library" URL="/&lt;vilib&gt;/Analysis/NI_AALPro.lvlib"/>
 			</Item>
 			<Item Name="keithly one-time autorange.vi" Type="VI" URL="../keithly one-time autorange.vi"/>
 			<Item Name="keithly set-up_VISA.vi" Type="VI" URL="../keithly set-up_VISA.vi"/>
@@ -72,6 +76,11 @@
 			<Item Name="Thorlabs.MotionControl.IntegratedStepperMotorsCLI.dll" Type="Document" URL="../Thorlabs.MotionControl.IntegratedStepperMotorsCLI.dll"/>
 			<Item Name="get-stage-positions.vi" Type="VI" URL="../get-stage-positions.vi"/>
 			<Item Name="build-diode-scan-pts.vi" Type="VI" URL="../build-diode-scan-pts.vi"/>
+			<Item Name="build-scan-pts-list.vi" Type="VI" URL="../build-scan-pts-list.vi"/>
+			<Item Name="auto_alignment.vi" Type="VI" URL="../auto_alignment.vi"/>
+			<Item Name="PD3_model_calc.vi" Type="VI" URL="../PD3_model_calc.vi"/>
+			<Item Name="plane_from_3-pts.vi" Type="VI" URL="../plane_from_3-pts.vi"/>
+			<Item Name="auto_alignment-make_start_simplex.vi" Type="VI" URL="../auto_alignment-make_start_simplex.vi"/>
 		</Item>
 		<Item Name="Build Specifications" Type="Build"/>
 	</Item>
