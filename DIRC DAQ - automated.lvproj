@@ -62,11 +62,11 @@
 				<Item Name="Sort 2D Array - Push Stack.vi" Type="VI" URL="/&lt;vilib&gt;/Array/Sort 2D Array - Push Stack.vi"/>
 				<Item Name="Assert Block Data Type.vim" Type="VI" URL="/&lt;vilib&gt;/Utility/TypeAssert/Assert Block Data Type.vim"/>
 				<Item Name="NI_AALPro.lvlib" Type="Library" URL="/&lt;vilib&gt;/Analysis/NI_AALPro.lvlib"/>
+				<Item Name="Remove Duplicates From 1D Array.vim" Type="VI" URL="/&lt;vilib&gt;/Array/Remove Duplicates From 1D Array.vim"/>
 			</Item>
 			<Item Name="keithly one-time autorange.vi" Type="VI" URL="../keithly one-time autorange.vi"/>
 			<Item Name="keithly set-up_VISA.vi" Type="VI" URL="../keithly set-up_VISA.vi"/>
 			<Item Name="log_file_setup.vi" Type="VI" URL="../log_file_setup.vi"/>
-			<Item Name="meter_buffered - one channel.vi" Type="VI" URL="../meter_buffered - one channel.vi"/>
 			<Item Name="meter_buffered.vi" Type="VI" URL="../meter_buffered.vi"/>
 			<Item Name="meter_scan_build-cmd.vi" Type="VI" URL="../meter_scan_build-cmd.vi"/>
 			<Item Name="read_channels_specify_range_VISA.vi" Type="VI" URL="../read_channels_specify_range_VISA.vi"/>
@@ -81,6 +81,7 @@
 			<Item Name="PD3_model_calc.vi" Type="VI" URL="../PD3_model_calc.vi"/>
 			<Item Name="plane_from_3-pts.vi" Type="VI" URL="../plane_from_3-pts.vi"/>
 			<Item Name="auto_alignment-make_start_simplex.vi" Type="VI" URL="../auto_alignment-make_start_simplex.vi"/>
+			<Item Name="format_NM_pt_history.vi" Type="VI" URL="../format_NM_pt_history.vi"/>
 		</Item>
 		<Item Name="Build Specifications" Type="Build"/>
 	</Item>
