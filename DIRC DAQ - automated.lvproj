@@ -61,7 +61,6 @@
 				<Item Name="Sort 2D Array - Pop Stack.vi" Type="VI" URL="/&lt;vilib&gt;/Array/Sort 2D Array - Pop Stack.vi"/>
 				<Item Name="Sort 2D Array - Push Stack.vi" Type="VI" URL="/&lt;vilib&gt;/Array/Sort 2D Array - Push Stack.vi"/>
 				<Item Name="Assert Block Data Type.vim" Type="VI" URL="/&lt;vilib&gt;/Utility/TypeAssert/Assert Block Data Type.vim"/>
-				<Item Name="NI_AALPro.lvlib" Type="Library" URL="/&lt;vilib&gt;/Analysis/NI_AALPro.lvlib"/>
 				<Item Name="Remove Duplicates From 1D Array.vim" Type="VI" URL="/&lt;vilib&gt;/Array/Remove Duplicates From 1D Array.vim"/>
 			</Item>
 			<Item Name="keithly one-time autorange.vi" Type="VI" URL="../keithly one-time autorange.vi"/>
@@ -78,8 +77,6 @@
 			<Item Name="build-diode-scan-pts.vi" Type="VI" URL="../build-diode-scan-pts.vi"/>
 			<Item Name="build-scan-pts-list.vi" Type="VI" URL="../build-scan-pts-list.vi"/>
 			<Item Name="auto_alignment.vi" Type="VI" URL="../auto_alignment.vi"/>
-			<Item Name="PD3_model_calc.vi" Type="VI" URL="../PD3_model_calc.vi"/>
-			<Item Name="plane_from_3-pts.vi" Type="VI" URL="../plane_from_3-pts.vi"/>
 			<Item Name="auto_alignment-make_start_simplex.vi" Type="VI" URL="../auto_alignment-make_start_simplex.vi"/>
 			<Item Name="format_NM_pt_history.vi" Type="VI" URL="../format_NM_pt_history.vi"/>
 		</Item>
