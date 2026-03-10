@@ -15,6 +15,7 @@
 		<Property Name="specify.custom.address" Type="Bool">false</Property>
 		<Item Name="Double click All-In-One_EIC-DIRC_DAQ.vi to open.txt" Type="Document" URL="../Double click All-In-One_EIC-DIRC_DAQ.vi to open.txt"/>
 		<Item Name="All-In-One_EIC-DIRC_DAQ.vi" Type="VI" URL="../All-In-One_EIC-DIRC_DAQ.vi"/>
+		<Item Name="All-In-One_EIC-DIRC_DAQ_v2.vi" Type="VI" URL="../All-In-One_EIC-DIRC_DAQ_v2.vi"/>
 		<Item Name="Dependencies" Type="Dependencies">
 			<Item Name="instr.lib" Type="Folder">
 				<Item Name="Keithley 6517.lvlib" Type="Library" URL="/&lt;instrlib&gt;/Keithley 6517/Keithley 6517.lvlib"/>
@@ -61,8 +62,12 @@
 				<Item Name="Sort 2D Array - Pop Stack.vi" Type="VI" URL="/&lt;vilib&gt;/Array/Sort 2D Array - Pop Stack.vi"/>
 				<Item Name="Sort 2D Array - Push Stack.vi" Type="VI" URL="/&lt;vilib&gt;/Array/Sort 2D Array - Push Stack.vi"/>
 				<Item Name="Assert Block Data Type.vim" Type="VI" URL="/&lt;vilib&gt;/Utility/TypeAssert/Assert Block Data Type.vim"/>
-				<Item Name="NI_AALPro.lvlib" Type="Library" URL="/&lt;vilib&gt;/Analysis/NI_AALPro.lvlib"/>
 				<Item Name="Remove Duplicates From 1D Array.vim" Type="VI" URL="/&lt;vilib&gt;/Array/Remove Duplicates From 1D Array.vim"/>
+				<Item Name="Random Number (Range).vi" Type="VI" URL="/&lt;vilib&gt;/numeric/Random Number (Range).vi"/>
+				<Item Name="Random Number (Range) DBL.vi" Type="VI" URL="/&lt;vilib&gt;/numeric/Random Number (Range) DBL.vi"/>
+				<Item Name="Random Number (Range) I64.vi" Type="VI" URL="/&lt;vilib&gt;/numeric/Random Number (Range) I64.vi"/>
+				<Item Name="sub_Random U32.vi" Type="VI" URL="/&lt;vilib&gt;/numeric/sub_Random U32.vi"/>
+				<Item Name="Random Number (Range) U64.vi" Type="VI" URL="/&lt;vilib&gt;/numeric/Random Number (Range) U64.vi"/>
 			</Item>
 			<Item Name="keithly one-time autorange.vi" Type="VI" URL="../keithly one-time autorange.vi"/>
 			<Item Name="keithly set-up_VISA.vi" Type="VI" URL="../keithly set-up_VISA.vi"/>
@@ -78,8 +83,6 @@
 			<Item Name="build-diode-scan-pts.vi" Type="VI" URL="../build-diode-scan-pts.vi"/>
 			<Item Name="build-scan-pts-list.vi" Type="VI" URL="../build-scan-pts-list.vi"/>
 			<Item Name="auto_alignment.vi" Type="VI" URL="../auto_alignment.vi"/>
-			<Item Name="PD3_model_calc.vi" Type="VI" URL="../PD3_model_calc.vi"/>
-			<Item Name="plane_from_3-pts.vi" Type="VI" URL="../plane_from_3-pts.vi"/>
 			<Item Name="auto_alignment-make_start_simplex.vi" Type="VI" URL="../auto_alignment-make_start_simplex.vi"/>
 			<Item Name="format_NM_pt_history.vi" Type="VI" URL="../format_NM_pt_history.vi"/>
 		</Item>
