@@ -2,6 +2,10 @@
 <Project Type="Project" LVVersion="24008000">
 	<Property Name="NI.LV.All.SaveVersion" Type="Str">24.0</Property>
 	<Property Name="NI.LV.All.SourceOnly" Type="Bool">true</Property>
+	<Property Name="varPersistentID:{4CBCE59A-D74D-41BB-A4F3-ADAACCBE3D8F}" Type="Ref">/dsgexp/Chassis/Real-Time Scan Resources/Mod1/CH2</Property>
+	<Property Name="varPersistentID:{DA3BC65F-745E-4332-B1F3-BB566836BCBD}" Type="Ref">/dsgexp/Chassis/Real-Time Scan Resources/Mod1/CH3</Property>
+	<Property Name="varPersistentID:{DE833F16-32AB-4C8E-A4F7-5851ED3A0D03}" Type="Ref">/dsgexp/Chassis/Real-Time Scan Resources/Mod1/CH1</Property>
+	<Property Name="varPersistentID:{DFF48B68-BE38-49E8-9BC3-89CC84F48297}" Type="Ref">/dsgexp/Chassis/Real-Time Scan Resources/Mod1/CH0</Property>
 	<Item Name="My Computer" Type="My Computer">
 		<Property Name="NI.SortType" Type="Int">3</Property>
 		<Property Name="server.app.propertiesEnabled" Type="Bool">true</Property>
@@ -13,8 +17,15 @@
 		<Property Name="server.vi.callsEnabled" Type="Bool">true</Property>
 		<Property Name="server.vi.propertiesEnabled" Type="Bool">true</Property>
 		<Property Name="specify.custom.address" Type="Bool">false</Property>
-		<Item Name="Double click All-In-One_EIC-DIRC_DAQ.vi to open.txt" Type="Document" URL="../Double click All-In-One_EIC-DIRC_DAQ.vi to open.txt"/>
-		<Item Name="All-In-One_EIC-DIRC_DAQ.vi" Type="VI" URL="../All-In-One_EIC-DIRC_DAQ.vi"/>
+		<Item Name="old" Type="Folder">
+			<Item Name="All-In-One_EIC-DIRC_DAQ.vi" Type="VI" URL="../All-In-One_EIC-DIRC_DAQ.vi"/>
+			<Item Name="All-In-One_EIC-DIRC_DAQ_v2.vi" Type="VI" URL="../All-In-One_EIC-DIRC_DAQ_v2.vi"/>
+			<Item Name="All-In-One_EIC-DIRC_DAQ_v2-1.vi" Type="VI" URL="../All-In-One_EIC-DIRC_DAQ_v2-1.vi"/>
+			<Item Name="main.vi" Type="VI" URL="../main.vi"/>
+			<Item Name="read_NI - scan.vi" Type="VI" URL="../read_NI - scan.vi"/>
+		</Item>
+		<Item Name="Double click All-In-One_EIC-DIRC_DAQ_v3.vi to open.txt" Type="Document" URL="../Double click All-In-One_EIC-DIRC_DAQ_v3.vi to open.txt"/>
+		<Item Name="All-In-One_EIC-DIRC_DAQ_v3.vi" Type="VI" URL="../All-In-One_EIC-DIRC_DAQ_v3.vi"/>
 		<Item Name="Dependencies" Type="Dependencies">
 			<Item Name="instr.lib" Type="Folder">
 				<Item Name="Keithley 6517.lvlib" Type="Library" URL="/&lt;instrlib&gt;/Keithley 6517/Keithley 6517.lvlib"/>
@@ -61,8 +72,12 @@
 				<Item Name="Sort 2D Array - Pop Stack.vi" Type="VI" URL="/&lt;vilib&gt;/Array/Sort 2D Array - Pop Stack.vi"/>
 				<Item Name="Sort 2D Array - Push Stack.vi" Type="VI" URL="/&lt;vilib&gt;/Array/Sort 2D Array - Push Stack.vi"/>
 				<Item Name="Assert Block Data Type.vim" Type="VI" URL="/&lt;vilib&gt;/Utility/TypeAssert/Assert Block Data Type.vim"/>
+				<Item Name="Random Number (Range).vi" Type="VI" URL="/&lt;vilib&gt;/numeric/Random Number (Range).vi"/>
+				<Item Name="Random Number (Range) DBL.vi" Type="VI" URL="/&lt;vilib&gt;/numeric/Random Number (Range) DBL.vi"/>
+				<Item Name="Random Number (Range) I64.vi" Type="VI" URL="/&lt;vilib&gt;/numeric/Random Number (Range) I64.vi"/>
+				<Item Name="sub_Random U32.vi" Type="VI" URL="/&lt;vilib&gt;/numeric/sub_Random U32.vi"/>
+				<Item Name="Random Number (Range) U64.vi" Type="VI" URL="/&lt;vilib&gt;/numeric/Random Number (Range) U64.vi"/>
 				<Item Name="NI_AALPro.lvlib" Type="Library" URL="/&lt;vilib&gt;/Analysis/NI_AALPro.lvlib"/>
-				<Item Name="Remove Duplicates From 1D Array.vim" Type="VI" URL="/&lt;vilib&gt;/Array/Remove Duplicates From 1D Array.vim"/>
 			</Item>
 			<Item Name="keithly one-time autorange.vi" Type="VI" URL="../keithly one-time autorange.vi"/>
 			<Item Name="keithly set-up_VISA.vi" Type="VI" URL="../keithly set-up_VISA.vi"/>
@@ -78,11 +93,152 @@
 			<Item Name="build-diode-scan-pts.vi" Type="VI" URL="../build-diode-scan-pts.vi"/>
 			<Item Name="build-scan-pts-list.vi" Type="VI" URL="../build-scan-pts-list.vi"/>
 			<Item Name="auto_alignment.vi" Type="VI" URL="../auto_alignment.vi"/>
-			<Item Name="PD3_model_calc.vi" Type="VI" URL="../PD3_model_calc.vi"/>
-			<Item Name="plane_from_3-pts.vi" Type="VI" URL="../plane_from_3-pts.vi"/>
 			<Item Name="auto_alignment-make_start_simplex.vi" Type="VI" URL="../auto_alignment-make_start_simplex.vi"/>
-			<Item Name="format_NM_pt_history.vi" Type="VI" URL="../format_NM_pt_history.vi"/>
+			<Item Name="move-and-measure.vi" Type="VI" URL="../move-and-measure.vi"/>
+			<Item Name="auto_alignment-v3-1.vi" Type="VI" URL="../auto_alignment-v3-1.vi"/>
+			<Item Name="lvanlys.dll" Type="Document" URL="/&lt;resource&gt;/lvanlys.dll"/>
+			<Item Name="move-and-measure_NI.vi" Type="VI" URL="../move-and-measure_NI.vi"/>
+			<Item Name="auto_alignment-v3-2.vi" Type="VI" URL="../auto_alignment-v3-2.vi"/>
+			<Item Name="read_NI.vi" Type="VI" URL="../read_NI.vi"/>
+			<Item Name="measure_NI.vi" Type="VI" URL="../measure_NI.vi"/>
+			<Item Name="Thorlabs.MotionControl.IntegratedStepperMotorsCLI.dll" Type="Document" URL="../Thorlabs/Thorlabs.MotionControl.IntegratedStepperMotorsCLI.dll"/>
+			<Item Name="Thorlabs.MotionControl.Benchtop.StepperMotorCLI.dll" Type="Document" URL="../Thorlabs/Thorlabs.MotionControl.Benchtop.StepperMotorCLI.dll"/>
+			<Item Name="Thorlabs.MotionControl.Controls.dll" Type="Document" URL="../Thorlabs/Thorlabs.MotionControl.Controls.dll"/>
 		</Item>
 		<Item Name="Build Specifications" Type="Build"/>
+	</Item>
+	<Item Name="dsgexp" Type="CompactRIO Ethernet Device">
+		<Property Name="alias.name" Type="Str">dsgexp</Property>
+		<Property Name="alias.value" Type="Str">172.22.11.2</Property>
+		<Property Name="crio.ControllerPID" Type="Str">774C</Property>
+		<Property Name="host.TargetCPUID" Type="UInt">8</Property>
+		<Property Name="host.TargetOSID" Type="UInt">8</Property>
+		<Property Name="target.IOScan.Faults" Type="Str"></Property>
+		<Property Name="target.IOScan.NetVarPeriod" Type="UInt">100</Property>
+		<Property Name="target.IOScan.NetWatchdogEnabled" Type="Bool">false</Property>
+		<Property Name="target.IOScan.Period" Type="UInt">10000</Property>
+		<Property Name="target.IOScan.PowerupMode" Type="UInt">0</Property>
+		<Property Name="target.IOScan.Priority" Type="UInt">0</Property>
+		<Property Name="target.IOScan.ReportModeConflict" Type="Bool">true</Property>
+		<Property Name="target.RTTarget.VIPath" Type="Path">/home/lvuser/natinst/bin</Property>
+		<Item Name="Chassis" Type="cRIO Chassis">
+			<Property Name="crio.ProgrammingMode" Type="Str">express</Property>
+			<Property Name="crio.ResourceID" Type="Str">RIO0</Property>
+			<Property Name="crio.Type" Type="Str">NI 9147</Property>
+			<Property Name="NI.SortType" Type="Int">3</Property>
+			<Item Name="Real-Time Scan Resources" Type="Module Container">
+				<Property Name="crio.ModuleContainerType" Type="Str">crio.RSIModuleContainer</Property>
+				<Item Name="Mod1" Type="RIO C Series Module">
+					<Property Name="crio.Calibration" Type="Str">1</Property>
+					<Property Name="crio.Location" Type="Str">Slot 1</Property>
+					<Property Name="crio.RequiresValidation" Type="Bool">false</Property>
+					<Property Name="crio.SDcounterSlaveChannelMask" Type="Str">0</Property>
+					<Property Name="crio.SDCounterSlaveMasterSlot" Type="Str">0</Property>
+					<Property Name="crio.SDInputFilter" Type="Str">128</Property>
+					<Property Name="crio.SupportsDynamicRes" Type="Bool">true</Property>
+					<Property Name="crio.Type" Type="Str">NI 9219</Property>
+					<Property Name="cRIOModule.CH0.DegreeRange" Type="Str">2</Property>
+					<Property Name="cRIOModule.CH0.Mode" Type="Str">1</Property>
+					<Property Name="cRIOModule.CH0.Range" Type="Str">0</Property>
+					<Property Name="cRIOModule.CH0.RTD_A" Type="Str">3.908300E-3</Property>
+					<Property Name="cRIOModule.CH0.RTD_B" Type="Str">-5.775000E-7</Property>
+					<Property Name="cRIOModule.CH0.RTD_C" Type="Str">-4.183000E-12</Property>
+					<Property Name="cRIOModule.CH0.RTD_Ro" Type="Str">1.000000E+2</Property>
+					<Property Name="cRIOModule.CH0.RTDType" Type="Str">1</Property>
+					<Property Name="cRIOModule.CH0.TCoupleType" Type="Str">0</Property>
+					<Property Name="cRIOModule.CH0.ThresHold" Type="Str">1.500000E+0</Property>
+					<Property Name="cRIOModule.CH1.DegreeRange" Type="Str">2</Property>
+					<Property Name="cRIOModule.CH1.Mode" Type="Str">1</Property>
+					<Property Name="cRIOModule.CH1.Range" Type="Str">0</Property>
+					<Property Name="cRIOModule.CH1.RTD_A" Type="Str">3.908300E-3</Property>
+					<Property Name="cRIOModule.CH1.RTD_B" Type="Str">-5.775000E-7</Property>
+					<Property Name="cRIOModule.CH1.RTD_C" Type="Str">-4.183000E-12</Property>
+					<Property Name="cRIOModule.CH1.RTD_Ro" Type="Str">1.000000E+2</Property>
+					<Property Name="cRIOModule.CH1.RTDType" Type="Str">1</Property>
+					<Property Name="cRIOModule.CH1.TCoupleType" Type="Str">0</Property>
+					<Property Name="cRIOModule.CH1.ThresHold" Type="Str">1.500000E+0</Property>
+					<Property Name="cRIOModule.CH2.DegreeRange" Type="Str">2</Property>
+					<Property Name="cRIOModule.CH2.Mode" Type="Str">1</Property>
+					<Property Name="cRIOModule.CH2.Range" Type="Str">0</Property>
+					<Property Name="cRIOModule.CH2.RTD_A" Type="Str">3.908300E-3</Property>
+					<Property Name="cRIOModule.CH2.RTD_B" Type="Str">-5.775000E-7</Property>
+					<Property Name="cRIOModule.CH2.RTD_C" Type="Str">-4.183000E-12</Property>
+					<Property Name="cRIOModule.CH2.RTD_Ro" Type="Str">1.000000E+2</Property>
+					<Property Name="cRIOModule.CH2.RTDType" Type="Str">1</Property>
+					<Property Name="cRIOModule.CH2.TCoupleType" Type="Str">0</Property>
+					<Property Name="cRIOModule.CH2.ThresHold" Type="Str">1.500000E+0</Property>
+					<Property Name="cRIOModule.CH3.DegreeRange" Type="Str">2</Property>
+					<Property Name="cRIOModule.CH3.Mode" Type="Str">5</Property>
+					<Property Name="cRIOModule.CH3.Range" Type="Str">0</Property>
+					<Property Name="cRIOModule.CH3.RTD_A" Type="Str">3.908300E-3</Property>
+					<Property Name="cRIOModule.CH3.RTD_B" Type="Str">-5.775000E-7</Property>
+					<Property Name="cRIOModule.CH3.RTD_C" Type="Str">-4.183000E-12</Property>
+					<Property Name="cRIOModule.CH3.RTD_Ro" Type="Str">1.000000E+2</Property>
+					<Property Name="cRIOModule.CH3.RTDType" Type="Str">1</Property>
+					<Property Name="cRIOModule.CH3.TCoupleType" Type="Str">0</Property>
+					<Property Name="cRIOModule.CH3.ThresHold" Type="Str">1.500000E+0</Property>
+					<Property Name="cRIOModule.Conversion Time" Type="Str">1</Property>
+					<Property Name="cRIOModule.DigitalIOMode" Type="Str">0</Property>
+					<Property Name="cRIOModule.EnableSpecialtyDigital" Type="Str">false</Property>
+					<Property Name="cRIOModule.TEDSSupport" Type="Str">true</Property>
+					<Item Name="CH0" Type="Variable">
+						<Property Name="featurePacks" Type="Str">Industrial</Property>
+						<Property Name="Industrial:BufferingEnabled" Type="Str">False</Property>
+						<Property Name="Industrial:ChannelIndex" Type="Str">0</Property>
+						<Property Name="Industrial:IODirection" Type="Str">Input</Property>
+						<Property Name="Industrial:IsNetworkPublished" Type="Str">True</Property>
+						<Property Name="Industrial:Mode" Type="Str">1</Property>
+						<Property Name="Industrial:PhysicalName" Type="Str">CH0</Property>
+						<Property Name="Network:UseBinding" Type="Str">False</Property>
+						<Property Name="Network:UseBuffering" Type="Str">False</Property>
+						<Property Name="numTypedefs" Type="UInt">0</Property>
+						<Property Name="type" Type="Str">Industrial</Property>
+						<Property Name="typeDesc" Type="Bin">(1!!!#1!A!!!!!!"!!5!#A!!!1!!!!!!!!!!!!!!!!!!</Property>
+					</Item>
+					<Item Name="CH1" Type="Variable">
+						<Property Name="featurePacks" Type="Str">Industrial</Property>
+						<Property Name="Industrial:BufferingEnabled" Type="Str">False</Property>
+						<Property Name="Industrial:ChannelIndex" Type="Str">1</Property>
+						<Property Name="Industrial:IODirection" Type="Str">Input</Property>
+						<Property Name="Industrial:IsNetworkPublished" Type="Str">True</Property>
+						<Property Name="Industrial:Mode" Type="Str">1</Property>
+						<Property Name="Industrial:PhysicalName" Type="Str">CH1</Property>
+						<Property Name="Network:UseBinding" Type="Str">False</Property>
+						<Property Name="Network:UseBuffering" Type="Str">False</Property>
+						<Property Name="numTypedefs" Type="UInt">0</Property>
+						<Property Name="type" Type="Str">Industrial</Property>
+						<Property Name="typeDesc" Type="Bin">(1!!!#1!A!!!!!!"!!5!#A!!!1!!!!!!!!!!!!!!!!!!</Property>
+					</Item>
+					<Item Name="CH2" Type="Variable">
+						<Property Name="featurePacks" Type="Str">Industrial</Property>
+						<Property Name="Industrial:BufferingEnabled" Type="Str">False</Property>
+						<Property Name="Industrial:ChannelIndex" Type="Str">2</Property>
+						<Property Name="Industrial:IODirection" Type="Str">Input</Property>
+						<Property Name="Industrial:IsNetworkPublished" Type="Str">True</Property>
+						<Property Name="Industrial:Mode" Type="Str">1</Property>
+						<Property Name="Industrial:PhysicalName" Type="Str">CH2</Property>
+						<Property Name="Network:UseBinding" Type="Str">False</Property>
+						<Property Name="Network:UseBuffering" Type="Str">False</Property>
+						<Property Name="numTypedefs" Type="UInt">0</Property>
+						<Property Name="type" Type="Str">Industrial</Property>
+						<Property Name="typeDesc" Type="Bin">(1!!!#1!A!!!!!!"!!5!#A!!!1!!!!!!!!!!!!!!!!!!</Property>
+					</Item>
+					<Item Name="CH3" Type="Variable">
+						<Property Name="featurePacks" Type="Str">Industrial</Property>
+						<Property Name="Industrial:BufferingEnabled" Type="Str">False</Property>
+						<Property Name="Industrial:ChannelIndex" Type="Str">3</Property>
+						<Property Name="Industrial:IODirection" Type="Str">Input</Property>
+						<Property Name="Industrial:IsNetworkPublished" Type="Str">True</Property>
+						<Property Name="Industrial:Mode" Type="Str">1</Property>
+						<Property Name="Industrial:PhysicalName" Type="Str">CH3</Property>
+						<Property Name="Network:UseBinding" Type="Str">False</Property>
+						<Property Name="Network:UseBuffering" Type="Str">False</Property>
+						<Property Name="numTypedefs" Type="UInt">0</Property>
+						<Property Name="type" Type="Str">Industrial</Property>
+						<Property Name="typeDesc" Type="Bin">(1!!!#1!A!!!!!!"!!5!#A!!!1!!!!!!!!!!!!!!!!!!</Property>
+					</Item>
+				</Item>
+			</Item>
+		</Item>
 	</Item>
 </Project>
